@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsListe" value="name:ID;datatype:int,name:ID_FK;datatype:int,name:Resim;datatype:string,name:SiraNo;datatype:int" />
+</info>

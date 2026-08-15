@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Recordset1" value="name:AdresID;datatype:int,name:MusteriID;datatype:int,name:Unvan;datatype:string,name:VergiNo;datatype:string,name:VergiDairesi;datatype:string,name:Adres;datatype:string,name:Sehir;datatype:int,name:Ilce;datatype:int,name:AdresTipi;datatype:string" />
+	<infoitem key="UD_rsLink" value="name:UrlID;datatype:int,name:Link;datatype:string,name:Sayfa;datatype:string,name:ID;datatype:int,name:Title;datatype:string,name:Keywords;datatype:string,name:Description;datatype:string" />
+</info>

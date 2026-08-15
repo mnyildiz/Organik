@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsDetay" value="name:ID;datatype:int,name:Baslik;datatype:string,name:Metin1;datatype:blob,name:Metin2;datatype:blob,name:Metin3;datatype:blob,name:Metin4;datatype:blob" />
+</info>

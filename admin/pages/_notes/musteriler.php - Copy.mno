@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsListe" value="name:MusteriID;datatype:int,name:AdiSoyadi;datatype:string,name:Telefon;datatype:string,name:Email;datatype:string,name:TCKimlik;datatype:string,name:Parola;datatype:string,name:KayitTarihi;datatype:timestamp" />
+</info>

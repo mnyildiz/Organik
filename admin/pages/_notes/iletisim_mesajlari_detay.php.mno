@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsDetay" value="name:ID;datatype:int,name:AdiSoyadi;datatype:string,name:Telefon;datatype:string,name:Email;datatype:string,name:Adres;datatype:string,name:Konu;datatype:string,name:Mesaj;datatype:blob,name:KayitTarihi;datatype:timestamp,name:Okundu;datatype:int" />
+</info>

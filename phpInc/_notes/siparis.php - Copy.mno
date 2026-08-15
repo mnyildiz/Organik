@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsFaturaAdres" value="name:AdresID;datatype:int,name:MusteriID;datatype:int,name:Unvan;datatype:string,name:VergiNo;datatype:string,name:VergiDairesi;datatype:string,name:Adres;datatype:string,name:Sehir;datatype:int,name:Ilce;datatype:int,name:AdresTipi;datatype:string" />
+	<infoitem key="UD_rsFatura" value="name:AdresID;datatype:int,name:MusteriID;datatype:int,name:Unvan;datatype:string,name:VergiNo;datatype:string,name:VergiDairesi;datatype:string,name:Adres;datatype:string,name:Sehir;datatype:int,name:Ilce;datatype:int,name:AdresTipi;datatype:string" />
+	<infoitem key="UD_rsTeslimat" value="name:AdresID;datatype:int,name:MusteriID;datatype:int,name:Unvan;datatype:string,name:VergiNo;datatype:string,name:VergiDairesi;datatype:string,name:Adres;datatype:string,name:Sehir;datatype:int,name:Ilce;datatype:int,name:AdresTipi;datatype:string" />
+	<infoitem key="UD_rsSepetim" value="name:ID;datatype:int,name:PHPSESSID;datatype:string,name:MusteriID;datatype:int,name:UrunID;datatype:int,name:Fiyat;datatype:real,name:Adet;datatype:int" />
+	<infoitem key="UD_rsUrunKontrol" value="name:ID;datatype:int,name:PHPSESSID;datatype:string,name:MusteriID;datatype:int,name:UrunID;datatype:int,name:Fiyat;datatype:real,name:Adet;datatype:int" />
+	<infoitem key="UD_rsBanka" value="name:ID;datatype:int,name:HesapSahibi;datatype:string,name:IBAN;datatype:string,name:Banka;datatype:string" />
+</info>

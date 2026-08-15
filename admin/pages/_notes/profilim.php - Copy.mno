@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsProfil" value="name:UserID;datatype:int,name:Unvan;datatype:string,name:Adi;datatype:string,name:Soyadi;datatype:string,name:Telefon;datatype:string,name:Parola;datatype:string,name:Email;datatype:string,name:KayitTarihi;datatype:timestamp,name:Resim;datatype:string,name:Hakkimda;datatype:blob,name:Facebook;datatype:string,name:Twitter;datatype:string,name:Instagram;datatype:string,name:Youtube;datatype:string" />
+</info>

@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsIletisim" value="name:ID;datatype:int,name:Adres;datatype:blob,name:TelNo;datatype:string,name:FaxNo;datatype:string,name:Email;datatype:string,name:Facebook;datatype:string,name:Twitter;datatype:string,name:Youtube;datatype:string,name:Instagram;datatype:string,name:Google;datatype:string,name:Maps;datatype:blob" />
+</info>

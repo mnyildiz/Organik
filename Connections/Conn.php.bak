@@ -1,0 +1,23 @@
+<?php
+	error_reporting(0);
+	
+	if(!isset($_SESSION)){
+		session_start();	
+	}
+	
+	$hostname_Conn = "localhost";
+	$database_Conn = "ajansmetanu_organik";
+	$username_Conn = "ajansmet_user";
+	$password_Conn = "User.1230,";
+	$Conn = mysqli_connect($hostname_Conn, $username_Conn, $password_Conn, $database_Conn) or die(mysqli_connect_error()); 
+ 	
+	mysqli_set_charset($Conn, "utf8");
+	
+	
+	
+	$AdminURL = "https://organik.metanu.ist/admin/";
+	$SiteURL = "https://organik.metanu.ist/";
+	$DOCUMENT_ROOT = "/home/ajansmetanu/public_html/test/organik/";
+	
+	include('fn.php');
+?>

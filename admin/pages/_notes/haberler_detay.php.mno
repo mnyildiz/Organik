@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_rsDetay" value="name:ID;datatype:int,name:Resim;datatype:string,name:BuyukResim;datatype:string,name:Baslik;datatype:string,name:KisaBilgi;datatype:blob,name:Detay;datatype:blob,name:Tarih;datatype:string,name:SiraNo;datatype:int,name:Anasayfa;datatype:int,name:Slider;datatype:int,name:Link;datatype:string" />
+	<infoitem key="UD_rsSeo" value="name:UrlID;datatype:int,name:Link;datatype:string,name:Sayfa;datatype:string,name:ID;datatype:int,name:Title;datatype:string,name:Description;datatype:string" />
+</info>
