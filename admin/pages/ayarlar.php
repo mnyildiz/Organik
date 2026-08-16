@@ -20,12 +20,14 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 					   escape($Resim3, "text"),
                        escape($_POST['ID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_cevirileri_kaydet('ayarlar', $_POST['ID']);
   
   $updateSQL = sprintf("UPDATE tablo_url SET Title=%s, `Description`=%s WHERE UrlID=%s",
                        escape($_POST['Title'], "text"),
                        escape($_POST['Description'], "text"),
                        escape($_POST['UrlID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_url_cevirilerini_kaydet('anasayfa', 0);
   
   $_SESSION['islemMesaj'] = "ok";
   
@@ -191,6 +193,11 @@ $totalRows_rsUrl = mysqli_num_rows($rsUrl);
                         </div>
                       </div>   -->
                       
+                      <?php admin_ceviri_sekmeleri('ayarlar', $row_rsAyar['ID'], array(
+                        'Baslik' => 'Başlık',
+                        'Aciklama' => array('Açıklama', 'editor')
+                      ), 'anasayfa', 0); ?>
+
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-danger">Kaydet</button>

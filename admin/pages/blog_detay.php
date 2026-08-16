@@ -7,6 +7,7 @@ if ((isset($_GET['ID'])) && ($_GET['ID'] != "") && (isset($_GET['islemsil']))) {
   $deleteSQL = sprintf("DELETE FROM tablo_blog WHERE ID=%s",
                        escape($_GET['ID'], "int"));
   $Result1 = mysqli_query($Conn, $deleteSQL) or die(mysqli_error());
+  admin_cevirileri_sil('blog', $_GET['ID']);
   seoURLSil("blog_detay",$_GET['ID']);
   $Url = $AdminURL."index.php?sayfa=blog";	
   yonlendir_($Url);
@@ -29,7 +30,10 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 					   escape($_POST['Kategori'], "text"));
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
   
-  seoURLKaydet("blog_detay",mysqli_insert_id($Conn),$_POST['Baslik'],$_POST['Description']);
+  $kayitID = mysqli_insert_id($Conn);
+  seoURLKaydet("blog_detay",$kayitID,$_POST['Baslik'],$_POST['Description']);
+  admin_cevirileri_kaydet('blog', $kayitID);
+  admin_url_cevirilerini_kaydet('blog_detay', $kayitID);
     
   $Url = $AdminURL."index.php?sayfa=blog";	
   yonlendir_($Url);
@@ -54,6 +58,8 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
   
   seoURLKaydet("blog_detay",$_POST['ID'],$_POST['Baslik'],$_POST['Description']); 
+  admin_cevirileri_kaydet('blog', $_POST['ID']);
+  admin_url_cevirilerini_kaydet('blog_detay', $_POST['ID']);
    
     
   $Url = $AdminURL."index.php?sayfa=blog";	
@@ -70,7 +76,7 @@ $rsDetay = mysqli_query($Conn, $query_rsDetay) or die(mysqli_error());
 $row_rsDetay = mysqli_fetch_assoc($rsDetay);
 $totalRows_rsDetay = mysqli_num_rows($rsDetay);
 
-$query_rsSeo = sprintf("SELECT * FROM tablo_url WHERE Sayfa = 'blog-detay' AND ID = %s", escape($ID, "int"));
+$query_rsSeo = sprintf("SELECT * FROM tablo_url WHERE Sayfa = 'blog_detay' AND ID = %s", escape($ID, "int"));
 $rsSeo = mysqli_query($Conn, $query_rsSeo) or die(mysqli_error());
 $row_rsSeo = mysqli_fetch_assoc($rsSeo);
 $totalRows_rsSeo = mysqli_num_rows($rsSeo);
@@ -189,6 +195,13 @@ $totalRows_rsSeo = mysqli_num_rows($rsSeo);
                       
                       
                       
+                      <?php admin_ceviri_sekmeleri('blog', $ID, array(
+                        'Baslik' => 'Başlık',
+                        'KisaBilgi' => array('Kısa Bilgi', 'textarea'),
+                        'Detay' => array('Detay', 'editor'),
+                        'Kategori' => 'Kategori'
+                      ), 'blog_detay'); ?>
+
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-danger">Kaydet</button>

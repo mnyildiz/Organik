@@ -109,6 +109,12 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="<?php echo sayfa("url") ?>" class="nav-link">
+              <i class="nav-icon fas fa-link"></i>
+              <p>Sayfa URL ve SEO</p>
+            </a>
+          </li>
           
           
           

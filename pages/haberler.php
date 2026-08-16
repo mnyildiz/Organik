@@ -1,12 +1,12 @@
 <?php
-$query_rsListe = "SELECT * FROM tablo_haberler WHERE Slider = 'Evet' ORDER BY Tarih DESC LIMIT 5";
+$query_rsListe = i18n_select_sql('haberler', "b.Slider = 'Evet'", 'b.Tarih DESC', '5');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
 ?>
    <div class="banner-top">
        <div class="banner-title">
-          <h4>HABER <small>VE DUYURULAR</small></h4>
+          <h4><?php echo t('page.news') ?> <small><?php echo t('page.news_suffix') ?></small></h4>
        </div>
        </div>
   
@@ -15,7 +15,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
 
                 <div class="swiper mySwiper">
                     <div class="swiper-wrapper">
-                      <?php do { ?>      
+               <?php if ($totalRows_rsListe > 0) do { ?>  
                          
                          <div class="swiper-slide">
                             <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" alt="<?php echo $row_rsListe['Baslik']; ?>">
@@ -43,9 +43,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
         <?php }?>
   <?php
  if (!isset($_GET["tumunuGoster"])){
- 	$query_rsListe = "SELECT * FROM tablo_haberler WHERE Slider != 'Evet' ORDER BY Tarih DESC LIMIT 6";
+	$query_rsListe = i18n_select_sql('haberler', "b.Slider != 'Evet'", 'b.Tarih DESC', '6');
  }else{
-	 $query_rsListe = "SELECT * FROM tablo_haberler ORDER BY Tarih DESC";
+	 $query_rsListe = i18n_select_sql('haberler', '', 'b.Tarih DESC');
  }
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
@@ -55,10 +55,10 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
 <div class="container">
        	<?php require_once('inc/social.php'); ?>
 
-          <h3>HABERLER <span>+</span></h3>
+          <h3><?php echo t('page.news_plural') ?> <span>+</span></h3>
           <div class="row">
              
-             <?php do { ?> 
+             <?php if ($totalRows_rsListe > 0) do { ?> 
              
               <div class="col-lg-4">
                   <div class="box" data-aos="fade-up">
@@ -96,9 +96,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
  <?php
 
 if (!isset($_GET["tumunuGoster"])){
- 	$query_rsListe = "SELECT * FROM tablo_haberler ORDER BY Tarih DESC LIMIT 6,6";
+	$query_rsListe = i18n_select_sql('haberler', '', 'b.Tarih DESC', '6,6');
  }else{
-	 $query_rsListe = "SELECT * FROM tablo_haberler ORDER BY Tarih DESC";
+	 $query_rsListe = i18n_select_sql('haberler', '', 'b.Tarih DESC');
  }
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
@@ -109,7 +109,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
         
          <div class="container">
               <div class="row">
-              <?php do { ?> 
+              <?php if ($totalRows_rsListe > 0) do { ?> 
              
               <div class="col-lg-4">
                   <div class="box" data-aos="fade-up">
@@ -130,9 +130,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                
           </div>
           <div class="all">
-              <a href="<?php echo $SiteURL ?>haberler?tumunuGoster=ok">
+              <a href="<?php echo sayfa_linki('haberler') ?>?tumunuGoster=ok">
                   <img src="<?php echo $SiteURL ?>img/more.svg" alt="">
-              <p>Daha fazla göster</p>
+              <p><?php echo t('common.more') ?></p>
               </a>
      
       </div>

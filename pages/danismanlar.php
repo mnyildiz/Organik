@@ -1,12 +1,12 @@
 <?php
-$query_rsListe = "SELECT * FROM tablo_danismanlar ORDER BY SiraNo";
+$query_rsListe = i18n_select_sql('danismanlar', '', 'b.SiraNo');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
 ?>
    <div class="banner-top">
        <div class="banner-title">
-           <h4>DANIŞMANLAR</h4>
+           <h4><?php echo t('page.consultants') ?></h4>
        </div>
        </div>
        <div class="counselor-comment">
@@ -28,7 +28,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
             <div class="container">
                 <div class="row">
                 
-                <?php do { ?>    
+                <?php if ($totalRows_rsListe > 0) do { ?>    
                 
                 <div class="col-lg-3" data-aos="fade-up">
                     <div class="c-box">

@@ -1,10 +1,10 @@
 <?php 
-$query_rsDetay = sprintf("SELECT * FROM tablo_blog WHERE ID = %s", escape($ID, "int"));
+$query_rsDetay = i18n_select_sql('blog', 'b.ID = '.escape($ID, "int"));
 $rsDetay = mysqli_query($Conn, $query_rsDetay) or die(mysqli_error($Conn));
 $row_rsDetay = mysqli_fetch_assoc($rsDetay);
 $totalRows_rsDetay = mysqli_num_rows($rsDetay);
  
-$query_rsListe = "SELECT * FROM tablo_blog ORDER BY RAND() LIMIT 5";
+$query_rsListe = i18n_select_sql('blog', '', 'RAND()', '5');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
@@ -14,7 +14,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
        <div class="banner-title">
            
           <h6 data-aos="fade-right"><?php echo $row_rsDetay['Baslik']; ?></h6>
-          <h3 data-aos="fade-left"><img src="<?php echo $SiteURL ?>img/blog-logo.png" alt=""> BLOG</h3>
+          <h3 data-aos="fade-left"><img src="<?php echo $SiteURL ?>img/blog-logo.png" alt=""> <?php echo t('page.blog') ?></h3>
        </div>
        </div>
       
@@ -36,9 +36,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                         <div class="services-social blog-social">
             
                       <ul>
-                          <li><a target="_blank" class="share facebook" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo url("blog_detay",$row_rsDetay['ID']) ?>" data-text="Bunu Paylaş"><i class="demo-icon icon-facebook"></i></a></li>
-                         <li><a target="_blank" class="share twitter" href="https://twitter.com/intent/tweet?text=<?php echo strip_tags($row_rsDetay['Baslik']); ?>. <?php echo url("blog_detay",$row_rsDetay['ID']) ?>" data-text="Bunu Paylaş"><i class="demo-icon icon-twitter"></i></a></li>
-                          <li><a target="_blank" class="share linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=<?php echo url("blog_detay",$row_rsDetay['ID']) ?>&title=<?php echo strip_tags($row_rsDetay['Baslik']); ?>" data-text="Bunu Paylaş"><i class="demo-icon icon-linkedin"></i></a></li>
+                          <li><a target="_blank" class="share facebook" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo url("blog_detay",$row_rsDetay['ID']) ?>" data-text="<?php echo t('common.share') ?>"><i class="demo-icon icon-facebook"></i></a></li>
+                         <li><a target="_blank" class="share twitter" href="https://twitter.com/intent/tweet?text=<?php echo strip_tags($row_rsDetay['Baslik']); ?>. <?php echo url("blog_detay",$row_rsDetay['ID']) ?>" data-text="<?php echo t('common.share') ?>"><i class="demo-icon icon-twitter"></i></a></li>
+                          <li><a target="_blank" class="share linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=<?php echo url("blog_detay",$row_rsDetay['ID']) ?>&title=<?php echo strip_tags($row_rsDetay['Baslik']); ?>" data-text="<?php echo t('common.share') ?>"><i class="demo-icon icon-linkedin"></i></a></li>
                           
   
                      </ul>
@@ -51,9 +51,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                    </div>
                    <div class="col-lg-4">
                        <div class="right" data-aos="fade-left">
-                           <h3>BLOG <span>+</span></h3>
+                           <h3><?php echo t('page.blog') ?> <span>+</span></h3>
                            
-                          <?php do { ?>    
+                          <?php if ($totalRows_rsListe > 0) do { ?>    
                            
                            <div class="blog-box">
                                <a href="<?php echo url("blog_detay",$row_rsListe['ID']) ?>">

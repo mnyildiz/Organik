@@ -4763,3 +4763,8 @@ position: absolute;
 
 
 
+/* Language selector */
+.language-switcher{position:absolute;right:110px;top:28px;z-index:12;display:flex;gap:8px}
+.language-switcher a{font:600 12px/1 Montserrat,sans-serif;color:#1d1d1b;text-decoration:none;opacity:.55}
+.language-switcher a.active,.language-switcher a:hover{opacity:1}
+@media(max-width:1023px){.language-switcher{right:82px;top:22px}}

@@ -7,6 +7,7 @@ if ((isset($_GET['ID'])) && ($_GET['ID'] != "") && (isset($_GET['islemsil']))) {
   $deleteSQL = sprintf("DELETE FROM tablo_slider WHERE ID=%s",
                        escape($_GET['ID'], "int"));
   $Result1 = mysqli_query($Conn, $deleteSQL) or die(mysqli_error());
+  admin_cevirileri_sil('slider', $_GET['ID']);
 
   $Url = $AdminURL."index.php?sayfa=slider";	
   yonlendir_($Url);
@@ -36,6 +37,8 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 					   escape($_POST['Link'], "text"),
                        escape($_POST['SiraNo'], "int"));
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
+  $kayitID = mysqli_insert_id($Conn);
+  admin_cevirileri_kaydet('slider', $kayitID);
     
   $Url = $AdminURL."index.php?sayfa=slider";	
   yonlendir_($Url);
@@ -55,6 +58,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                        escape($_POST['SiraNo'], "int"),
                        escape($_POST['ID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_cevirileri_kaydet('slider', $_POST['ID']);
     
   $Url = $AdminURL."index.php?sayfa=slider";	
   yonlendir_($Url);
@@ -150,6 +154,13 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                         </div>
                       </div>
                       
+                      <?php admin_ceviri_sekmeleri('slider', $ID, array(
+                        'Baslik' => 'Başlık',
+                        'Baslik2' => 'İkinci Başlık',
+                        'Detay' => array('Detay', 'editor'),
+                        'Link' => 'Bağlantı'
+                      )); ?>
+
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-danger">Kaydet</button>

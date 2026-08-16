@@ -1,7 +1,7 @@
    <div class="banner-top">
        <div class="banner-title">
            
-           <h4>İLETİŞİM</h4>
+           <h4><?php echo t('contact.title') ?></h4>
 
        </div>
        </div>
@@ -9,7 +9,7 @@
 			$active1 =  "";
 			$active2 =  "";
 			
-			if($_GET["maps"] == "2"){
+			if(isset($_GET["maps"]) && $_GET["maps"] == "2"){
 				$divMaps =  $maps2;
 				$active2 =  "active";
 			}else{
@@ -36,24 +36,24 @@
          <div class="contact-page">
              <div class="container">
                 <img src="<?php echo $SiteURL ?>img/contact-bottom.png" alt="">
-                 <h4>İletişim formu</h4>
+                 <h4><?php echo t('contact.form_title') ?></h4>
                  <form action="" method="post">
                      <div class="row">
                          <div class="col-lg-8" data-aos="fade-right">
                              <div class="form-group half">
-                                <input type="text" name="AdiSoyadi" required type="text" placeholder="Ad Soyad*">
+                                <input type="text" name="AdiSoyadi" required placeholder="<?php echo t('contact.name') ?>">
                              </div>
                              <div class="form-group half h-right">
-                                 <input name="Email" required type="email" placeholder="E-mail*">
+                                 <input name="Email" required type="email" placeholder="<?php echo t('contact.email') ?>">
                              </div>
                              <div class="form-group">
-                                 <input type="text" name="Konu" placeholder="Konu">
+                                 <input type="text" name="Konu" placeholder="<?php echo t('contact.subject') ?>">
                              </div>
                              <div class="form-group">
-                                 <textarea name="Mesaj" required placeholder="Mesaj"></textarea>
+                                 <textarea name="Mesaj" required placeholder="<?php echo t('contact.message') ?>"></textarea>
                              </div>
                              <div class="form-group">
-                                 <button>Gönder</button>
+                                 <button><?php echo t('contact.send') ?></button>
                              </div>
                          </div>
                          <div class="col-lg-4" data-aos="fade-left">
@@ -93,7 +93,6 @@
 	 <script>
      	function MapsChance(i){
 			 
-			document.location = "<?php echo $SiteURL ?>iletisim?maps="+i;
-			//document.location = '<?php echo $SiteURL ?>iletisim?maps='+i);
+			document.location = "<?php echo sayfa_linki('iletisim') ?>?maps="+i;
 		}
      </script>

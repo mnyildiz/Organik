@@ -7,6 +7,7 @@ if ((isset($_GET['ID'])) && ($_GET['ID'] != "") && (isset($_GET['islemsil']))) {
   $deleteSQL = sprintf("DELETE FROM tablo_hizmetler WHERE ID=%s",
                        escape($_GET['ID'], "int"));
   $Result1 = mysqli_query($Conn, $deleteSQL) or die(mysqli_error());
+  admin_cevirileri_sil('hizmetler', $_GET['ID']);
   seoURLSil("hizmetler_detay",$_GET['ID']);
   $Url = $AdminURL."index.php?sayfa=hizmetler";	
   yonlendir_($Url);
@@ -48,7 +49,10 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
                        escape($_POST['SiraNo'], "int"));
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
   
-  seoURLKaydet("hizmetler_detay",mysqli_insert_id($Conn),$_POST['Baslik'],$_POST['Description']);
+  $kayitID = mysqli_insert_id($Conn);
+  seoURLKaydet("hizmetler_detay",$kayitID,$_POST['Baslik'],$_POST['Description']);
+  admin_cevirileri_kaydet('hizmetler', $kayitID);
+  admin_url_cevirilerini_kaydet('hizmetler_detay', $kayitID);
     
   $Url = $AdminURL."index.php?sayfa=hizmetler";	
   yonlendir_($Url);
@@ -92,6 +96,8 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
   
   seoURLKaydet("hizmetler_detay",$_POST['ID'],$_POST['Baslik'],$_POST['Description']); 
+  admin_cevirileri_kaydet('hizmetler', $_POST['ID']);
+  admin_url_cevirilerini_kaydet('hizmetler_detay', $_POST['ID']);
    
     
   $Url = $AdminURL."index.php?sayfa=hizmetler";	
@@ -108,7 +114,7 @@ $rsDetay = mysqli_query($Conn, $query_rsDetay) or die(mysqli_error());
 $row_rsDetay = mysqli_fetch_assoc($rsDetay);
 $totalRows_rsDetay = mysqli_num_rows($rsDetay);
 
-$query_rsSeo = sprintf("SELECT * FROM tablo_url WHERE Sayfa = 'hizmetler-detay' AND ID = %s", escape($ID, "int"));
+$query_rsSeo = sprintf("SELECT * FROM tablo_url WHERE Sayfa = 'hizmetler_detay' AND ID = %s", escape($ID, "int"));
 $rsSeo = mysqli_query($Conn, $query_rsSeo) or die(mysqli_error());
 $row_rsSeo = mysqli_fetch_assoc($rsSeo);
 $totalRows_rsSeo = mysqli_num_rows($rsSeo);
@@ -244,6 +250,28 @@ $totalRows_rsSeo = mysqli_num_rows($rsSeo);
                        
                       
                       
+                      <?php admin_ceviri_sekmeleri('hizmetler', $ID, array(
+                        'Baslik' => 'Başlık',
+                        'Baslik2' => 'İkinci Başlık',
+                        'Veri1' => array('Metin 1', 'editor'),
+                        'Veri2' => array('Metin 2', 'editor'),
+                        'Veri3' => array('Metin 3', 'editor'),
+                        'Veri4' => array('Metin 4', 'editor'),
+                        'Veri5' => array('Metin 5', 'editor'),
+                        'Veri6' => array('Metin 6', 'editor'),
+                        'Veri7' => array('Metin 7', 'editor'),
+                        'Veri8' => array('Sekme Metni 1', 'editor'),
+                        'Veri9' => array('Sekme Metni 2', 'editor'),
+                        'Veri10' => array('Sekme Metni 3', 'editor'),
+                        'Veri11' => array('Sekme Metni 4', 'editor'),
+                        'Veri12' => array('Sekme Metni 5', 'editor'),
+                        'BaslikTab1' => 'Sekme Başlığı 1',
+                        'BaslikTab2' => 'Sekme Başlığı 2',
+                        'BaslikTab3' => 'Sekme Başlığı 3',
+                        'BaslikTab4' => 'Sekme Başlığı 4',
+                        'BaslikTab5' => 'Sekme Başlığı 5'
+                      ), 'hizmetler_detay'); ?>
+
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-danger">Kaydet</button>

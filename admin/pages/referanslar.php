@@ -73,7 +73,7 @@ $totalPages_rsListe = ceil($toplam/$maxRows_rsListe)-1;
                       <td><?php echo $row_rsListe['ID']; ?></td>
                       <td><img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" width="55" height="52" /></td>
                       <td><img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim2']; ?>" width="55" height="52" /></td>
-                      <td><?php echo $row_rsListe['Baslik']; ?></td>
+                      <td><?php echo $row_rsListe['Baslik']; ?> <?php admin_ceviri_durum_rozetleri('referanslar', $row_rsListe['ID']); ?></td>
                       <td><?php echo $row_rsListe['SiraNo']; ?></td>
                       <td>
                         <a href="<?php echo sayfa("referanslar_detay") ?>&ID=<?php echo $row_rsListe['ID']; ?>" class="btn btn-sm btn-success">Detay</a>

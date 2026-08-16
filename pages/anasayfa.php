@@ -1,6 +1,6 @@
   <?php
 
-$query_rsSlider = "SELECT * FROM tablo_slider ORDER BY SiraNo ASC";
+$query_rsSlider = i18n_select_sql('slider', '', 'b.SiraNo ASC');
 $rsSlider = mysqli_query($Conn, $query_rsSlider) or die(mysqli_error());
 $row_rsSlider = mysqli_fetch_assoc($rsSlider);
 $totalRows_rsSlider = mysqli_num_rows($rsSlider);
@@ -9,7 +9,7 @@ $totalRows_rsSlider = mysqli_num_rows($rsSlider);
           <div class="swiper mySwiper">
               <div class="swiper-wrapper">
                  
-               <?php do { ?>  
+               <?php if ($totalRows_rsSlider > 0) do { ?>  
                  
           <div class="swiper-slide">
               <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsSlider['Resim']; ?>" alt="">
@@ -31,12 +31,12 @@ $totalRows_rsSlider = mysqli_num_rows($rsSlider);
            <div class="container">
               <div class="left" data-aos="fade-up" data-aos-duration="1500">
                  <div class="abt-img ">
-                     <a href="<?php echo $SiteURL ?>danismanlar"><img src="<?php echo $SiteURL ?>img/about-icon.svg" class="about-top fx" alt=""></a>
-                     <a href="<?php echo $SiteURL ?>danismanlar"><img src="<?php echo $SiteURL ?>img/about-icon-hover.svg" class="about-top hvr" alt=""></a>
+                     <a href="<?php echo sayfa_linki('danismanlar') ?>"><img src="<?php echo $SiteURL ?>img/about-icon.svg" class="about-top fx" alt=""></a>
+                     <a href="<?php echo sayfa_linki('danismanlar') ?>"><img src="<?php echo $SiteURL ?>img/about-icon-hover.svg" class="about-top hvr" alt=""></a>
                  </div>
                  
-                 <a href="<?php echo $SiteURL ?>hakkimizda">
-                  <h3>Hakkımızda</h3>
+                 <a href="<?php echo sayfa_linki('hakkimizda') ?>">
+                  <h3><?php echo t('nav.about') ?></h3>
                   <?php echo $row_rsMetinler['Metin0']; ?>
                   <i class="icon-right"></i></a>
               </div>
@@ -48,7 +48,7 @@ $totalRows_rsSlider = mysqli_num_rows($rsSlider);
  
  <source src="movie.ogg" type="video/ogg">
  
-Tarayıcınız video etiketini desteklemiyor.
+<?php echo t('video.unsupported') ?>
 
 </video>
               </div>
@@ -60,7 +60,7 @@ Tarayıcınız video etiketini desteklemiyor.
       </div>
       <?php
 
-$query_rsListe = "SELECT * FROM tablo_blog ORDER BY Tarih DESC LIMIT 4";
+$query_rsListe = i18n_select_sql('blog', '', 'b.Tarih DESC', '4');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
@@ -70,7 +70,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
               <div class="title" data-aos="fade-right" data-aos-duration="1000">
                   <img src="<?php echo $SiteURL ?>img/blog-logo.png" alt="">
                   <h3>BLOG</h3>
-                  <a href="<?php echo $SiteURL ?>blog"><i class="icon-right"></i> TÜMÜNÜ GÖR</a>
+                  <a href="<?php echo sayfa_linki('blog') ?>"><i class="icon-right"></i> <?php echo t('home.show_all') ?></a>
               </div>
               <div class="left" data-aos="flip-right" data-aos-duration="1500">
                   <img src="<?php echo $SiteURL ?>img/main-blog-img.jpg" alt="">
@@ -79,7 +79,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                   <div class="row">
                   
                   
-                    <?php do { ?> 
+                    <?php if ($totalRows_rsListe > 0) do { ?> 
                       <div class="col-lg-6">
                           <div class="box">
                              <a href="<?php echo url("blog_detay",$row_rsListe['ID']) ?>">
@@ -98,18 +98,18 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
           </div>
       </div>
       <?php 
-		$query_rsListe = "SELECT * FROM tablo_hizmetler ORDER BY SiraNo";
+		$query_rsListe = i18n_select_sql('hizmetler', '', 'b.SiraNo');
 		$rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 		$row_rsListe = mysqli_fetch_assoc($rsListe);
 		$totalRows_rsListe = mysqli_num_rows($rsListe);
 	  ?>
       <div class="main-services">
           <div class="container">
-             <h3 data-aos="fade-right" data-aos-duration="1500">Hizmetlerimiz</h3>
+             <h3 data-aos="fade-right" data-aos-duration="1500"><?php echo t('nav.services') ?></h3>
           </div>
           <div class="swiper mySwiper">
                       <div class="swiper-wrapper">
-			 <?php do { ?> 
+			 <?php if ($totalRows_rsListe > 0) do { ?> 
               <div class="swiper-slide">
                   <div class="box">
                       <a href="<?php echo url("hizmetler_detay",$row_rsListe['ID']) ?>">
@@ -129,26 +129,26 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
       </div>
      <?php
 
-$query_rsListe = "SELECT * FROM tablo_haberler WHERE Slider = 'Evet' ORDER BY Tarih DESC LIMIT 5";
+$query_rsListe = i18n_select_sql('haberler', "b.Slider = 'Evet'", 'b.Tarih DESC', '5');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
 ?>
       <div class="main-news">
           <div class="container">
-              <h3 data-aos="fade-right" data-aos-duration="1500">Haberler ve Duyurular</h3>
+              <h3 data-aos="fade-right" data-aos-duration="1500"><?php echo t('home.news') ?></h3>
               
               <div class="swiper mySwiper">
                   <div class="swiper-wrapper">
                     
-                    <?php do { ?> 
+                    <?php if ($totalRows_rsListe > 0) do { ?> 
                     <div class="swiper-slide">
                         <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" alt="<?php echo $row_rsListe['Baslik']; ?>">
                         <div class="box" >
                             <a href="<?php echo url("haberler_detay",$row_rsListe['ID']) ?>">
                                 <h4 data-aos="fade-right" data-aos-duration="1500"><?php echo $row_rsListe['Baslik']; ?></h4>
                             <p data-aos="fade-right" data-aos-duration="1500"><?php echo $row_rsListe['KisaBilgi']; ?></p>
-                            <span><small>HABERE GİT</small><i class="icon-right"></i></span>
+                            <span><small><?php echo t('home.go_to_news') ?></small><i class="icon-right"></i></span>
                             </a>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                   <div class="swiper-pagination"></div>
               </div>
               <div class="all">
-                  <a href="<?php echo $SiteURL ?>haberler"><i class="icon-right"></i> TÜMÜNÜ GÖR</a>
+                  <a href="<?php echo sayfa_linki('haberler') ?>"><i class="icon-right"></i> <?php echo t('home.show_all') ?></a>
               </div>
           </div>
       </div>

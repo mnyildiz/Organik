@@ -1,5 +1,5 @@
 <?php
-$query_rsListe = "SELECT * FROM tablo_referanslar ORDER BY SiraNo";
+$query_rsListe = i18n_select_sql('referanslar', '', 'b.SiraNo');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
@@ -10,7 +10,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
       <div class="container">
           <div class="box" >
             
-          <h4 data-aos="fade-down">REFERANSLAR</h4>
+          <h4 data-aos="fade-down"><?php echo t('page.references') ?></h4>
           </div>
           <div class="bottom">
               <img src="<?php echo $SiteURL ?>img/arrow-bottom.png" alt="">
@@ -25,7 +25,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
           <div class="container">
               <div class="reference-boxs">
               
-               <?php do { ?>   
+               <?php if ($totalRows_rsListe > 0) do { ?>   
                   <div class="reference-box" data-aos="fade-up">
                   	<div class="first">
                   	    <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" alt="<?php echo $row_rsListe['Baslik']; ?>" >

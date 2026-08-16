@@ -4,6 +4,7 @@ if(!isset($ACCESS)){
 }
 
 if ((isset($_GET['UrlID'])) && ($_GET['UrlID'] != "") && (isset($_GET['islemsil']))) {
+  mysqli_query($Conn, 'DELETE FROM tablo_url_ceviri WHERE UrlID='.(int) $_GET['UrlID']);
   $deleteSQL = sprintf("DELETE FROM tablo_url WHERE UrlID=%s",
                        escape($_GET['UrlID'], "int"));
   $Result1 = mysqli_query($Conn, $deleteSQL) or die(mysqli_error());
@@ -31,6 +32,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
                        escape($_POST['Title'], "text"),
                        escape($_POST['Description'], "text"));
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
+  admin_url_cevirilerini_urlid_ile_kaydet(mysqli_insert_id($Conn));
   
   $_SESSION['islemMesaj'] = "Bilgileriniz güncellendi";
   
@@ -47,6 +49,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                        escape($_POST['Description'], "text"),
                        escape($_POST['UrlID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_url_cevirilerini_urlid_ile_kaydet($_POST['UrlID']);
   
   $_SESSION['islemMesaj'] = "Bilgileriniz güncellendi";
   
@@ -112,8 +115,10 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                   </div>
                 </div>
                       
-                <div class="form-group row">
-                  <div class="offset-sm-2 col-sm-10">
+                      <?php admin_url_ceviri_sekmeleri(isset($row_rsDetay['Sayfa']) ? $row_rsDetay['Sayfa'] : '', isset($row_rsDetay['ID']) ? $row_rsDetay['ID'] : 0, isset($row_rsDetay['UrlID']) ? $row_rsDetay['UrlID'] : null); ?>
+
+                      <div class="form-group row">
+                        <div class="offset-sm-2 col-sm-10">
                     <button type="submit" class="btn btn-danger">Kaydet</button>
                   </div>
                 </div>

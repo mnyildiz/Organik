@@ -7,7 +7,8 @@ if (isset($_GET['Title'])) {
 
 $Arama = array();
 
-$query_rsListe = sprintf("SELECT * FROM tablo_blog WHERE Baslik LIKE %s", escape("%" . $Title . "%", "text"));
+$aramaKolonu = dil() === 'tr' ? 'b.Baslik' : 'c.Baslik';
+$query_rsListe = i18n_select_sql('blog', $aramaKolonu.' LIKE '.escape("%" . $Title . "%", "text"));
 $results = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 foreach($results as $result){
  	$Arama[] = array(
@@ -17,7 +18,7 @@ foreach($results as $result){
 				);
 }
 
-$query_rsListe = sprintf("SELECT * FROM tablo_haberler WHERE Baslik LIKE %s", escape("%" . $Title . "%", "text"));
+$query_rsListe = i18n_select_sql('haberler', $aramaKolonu.' LIKE '.escape("%" . $Title . "%", "text"));
 $results = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 foreach($results as $result){
  	$Arama[] = array(
@@ -27,7 +28,7 @@ foreach($results as $result){
 				);
 }
 
-$query_rsListe = sprintf("SELECT * FROM tablo_hizmetler WHERE Baslik LIKE %s", escape("%" . $Title . "%", "text"));
+$query_rsListe = i18n_select_sql('hizmetler', $aramaKolonu.' LIKE '.escape("%" . $Title . "%", "text"));
 $results = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 foreach($results as $result){
 	$Arama[] = array(
@@ -37,7 +38,7 @@ foreach($results as $result){
 				);
 }
 
-$query_rsListe = sprintf("SELECT * FROM tablo_danismanlar WHERE Baslik LIKE %s", escape("%" . $Title . "%", "text"));
+$query_rsListe = i18n_select_sql('danismanlar', $aramaKolonu.' LIKE '.escape("%" . $Title . "%", "text"));
 $results = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 foreach($results as $result){
 	$Arama[] = array(
@@ -51,7 +52,7 @@ foreach($results as $result){
    <div class="banner-top">
        <div class="banner-title">
            
-           <h4>Arama Sonuçları</h4>
+           <h4><?php echo t('search.results') ?></h4>
            
        </div>
        </div>
@@ -84,8 +85,7 @@ foreach($results as $result){
               		<div class="col-lg-12">
                   <div class="box" data-aos="fade-up">
                       <a href="#">
-                          <h4>Aramanıza göre sonuç bulunamadı...</h4>
-                           <p><?php echo $result['KisaBilgi']; ?></p>
+                          <h4><?php echo t('search.empty') ?></h4>
                          
                         <i class="icon-right"></i>
                       </a>

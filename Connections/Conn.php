@@ -18,6 +18,8 @@
 	$AdminURL = "https://www.organikik.com.tr/admin/";
 	$SiteURL = "https://www.organikik.com.tr/";
 	$DOCUMENT_ROOT = "C:/WebSites/organik/";
+
+	require_once(__DIR__.'/i18n.php');
 	
 	include('fn.php');
 ?>

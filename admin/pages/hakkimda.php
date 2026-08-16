@@ -27,6 +27,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 					   escape($_POST['Metin11'], "text"),
                        escape($_POST['ID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_cevirileri_kaydet('metinler', $_POST['ID']);
   
   $_SESSION['islemMesaj'] = "ok";
   
@@ -169,6 +170,21 @@ $totalRows_rsDetay = mysqli_num_rows($rsDetay);
                         </div>
                       </div>
                       
+                      <?php admin_ceviri_sekmeleri('metinler', $row_rsDetay['ID'], array(
+                        'Metin0' => array('Anasayfa Metni', 'editor'),
+                        'Metin1' => 'Video Linki',
+                        'Metin2' => array('Organik Danışmanlık Hizmetleri', 'editor'),
+                        'Metin3' => array('Temel İlkeler', 'editor'),
+                        'Metin4' => array('Entegre Politikamız', 'editor'),
+                        'Metin5' => array('Haberler Sol Metin', 'editor'),
+                        'Metin6' => array('Haberler Sağ Metin', 'editor'),
+                        'Metin7' => array('Danışmanlar Sol Metin', 'editor'),
+                        'Metin8' => array('Danışmanlar Sağ Metin', 'editor'),
+                        'Metin9' => array('Blog Sol Metin', 'editor'),
+                        'Metin10' => array('Blog Sağ Metin', 'editor'),
+                        'Metin11' => array('İletişim Metni', 'editor')
+                      )); ?>
+
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-danger">Kaydet</button>

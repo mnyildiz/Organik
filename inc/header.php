@@ -1,5 +1,5 @@
 <?php 
-$query_rsHizmetler = "SELECT * FROM tablo_hizmetler ORDER BY SiraNo";
+$query_rsHizmetler = i18n_select_sql('hizmetler', '', 'b.SiraNo');
 $rsHizmetler = mysqli_query($Conn, $query_rsHizmetler) or die(mysqli_error());
 $row_rsHizmetler = mysqli_fetch_assoc($rsHizmetler);
 $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
@@ -7,7 +7,7 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
 <header>
        <div class="container">
            <div class="logo" >
-               <a href="<?php echo $SiteURL ?>">
+               <a href="<?php echo sayfa_linki('anasayfa') ?>">
                    <img src="<?php echo $SiteURL ?>img/logo.svg" alt="">
                </a>
            </div>
@@ -19,15 +19,23 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
                   <i class="icon-cancel"></i>
               </div>
                <div class="content">
-                   <form method="get" action="<?php echo $SiteURL ?>arama">
-                   	<input type="text" required minlength="3" name="Title" placeholder="Sitede Arayın...">
-                   	<button><i class="icon-search"></i> ARA</button>
+                   <form method="get" action="<?php echo sayfa_linki('arama') ?>">
+	                   	<input type="text" required minlength="3" name="Title" placeholder="<?php echo t('search.placeholder') ?>">
+	                   	<button><i class="icon-search"></i> <?php echo t('search.button') ?></button>
                    </form>
                </div>
            </div>
        </div>
+       <nav class="language-switcher" aria-label="Language">
+           <a href="<?php echo aktif_sayfa_dil_linki('tr') ?>"<?php if ($Dil === 'tr') echo ' class="active"'; ?>>TR</a>
+           <?php if (dil_yayinda('en') || $Dil === 'en') { ?>
+           <a href="<?php echo aktif_sayfa_dil_linki('en') ?>"<?php if ($Dil === 'en') echo ' class="active"'; ?>>EN</a>
+           <?php } if (dil_yayinda('de') || $Dil === 'de') { ?>
+           <a href="<?php echo aktif_sayfa_dil_linki('de') ?>"<?php if ($Dil === 'de') echo ' class="active"'; ?>>DE</a>
+           <?php } ?>
+       </nav>
        <div class="menu">
-            <h5>MENU</h5>
+            <h5><?php echo t('menu') ?></h5>
             <div class="toggle">
                 <span></span>
                 <span></span>
@@ -37,12 +45,12 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
        <div class="menu-box">
            <div class="menu-list">
            <div class="list-box">
-               <h4>MENU</h4>
+               <h4><?php echo t('menu') ?></h4>
            <ul class="first">
-               <li><a href="<?php echo $SiteURL ?>hakkimizda">HAKKIMIZDA</a></li>
-               <li><a href="#" class="open">HİZMETLERİMİZ</a>
+               <li><a href="<?php echo sayfa_linki('hakkimizda') ?>"><?php echo mb_strtoupper(t('nav.about'), 'UTF-8') ?></a></li>
+               <li><a href="#" class="open"><?php echo mb_strtoupper(t('nav.services'), 'UTF-8') ?></a>
                <ul>
-               <?php do { ?>
+               <?php if ($totalRows_rsHizmetler > 0) do { ?>
                    <li>
                    	<a href="<?php echo url("hizmetler_detay",$row_rsHizmetler['ID']) ?>">
                    		<?php echo $row_rsHizmetler['Baslik']; ?>
@@ -52,14 +60,14 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
                     
                </ul>
                </li>
-               <li><a href="<?php echo $SiteURL ?>referanslar">REFERANSLAR</a></li>
-               <li><a href="<?php echo $SiteURL ?>haberler">HABERLER</a></li>
+               <li><a href="<?php echo sayfa_linki('referanslar') ?>"><?php echo mb_strtoupper(t('nav.references'), 'UTF-8') ?></a></li>
+               <li><a href="<?php echo sayfa_linki('haberler') ?>"><?php echo mb_strtoupper(t('nav.news'), 'UTF-8') ?></a></li>
            </ul>
            </div>
            <ul>
-               <li><a href="<?php echo $SiteURL ?>danismanlar">DANIŞMANLAR</a></li>
-               <li><a href="<?php echo $SiteURL ?>blog">BLOG</a></li>
-               <li><a href="<?php echo $SiteURL ?>iletisim">İLETİŞİM</a></li>
+               <li><a href="<?php echo sayfa_linki('danismanlar') ?>"><?php echo mb_strtoupper(t('nav.consultants'), 'UTF-8') ?></a></li>
+               <li><a href="<?php echo sayfa_linki('blog') ?>"><?php echo mb_strtoupper(t('nav.blog'), 'UTF-8') ?></a></li>
+               <li><a href="<?php echo sayfa_linki('iletisim') ?>"><?php echo mb_strtoupper(t('nav.contact'), 'UTF-8') ?></a></li>
            </ul>
            <div class="bottom">
               <img src="<?php echo $SiteURL ?>img/blog-logo.png" alt="">

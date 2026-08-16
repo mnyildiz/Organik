@@ -3,7 +3,7 @@
       <div class="container">
           <div class="box">
      
-          <h4 data-aos="fade-down">HAKKIMIZDA</h4>
+          <h4 data-aos="fade-down"><?php echo t('about.title') ?></h4>
           </div>
           <div class="bottom">
               <img src="<?php echo $SiteURL ?>img/arrow-bottom.png" alt="">
@@ -16,10 +16,10 @@
 
          <div class="container">
              <div class="left" data-aos="fade-right">
-                 <h3>Organik Danışmanlık Hizmetleri</h3>
+                 <h3><?php echo t('about.company') ?></h3>
                     <?php echo $row_rsMetinler['Metin2']; ?>
                     
-                    <h4>Temel İlkeler</h4>
+                    <h4><?php echo t('about.principles') ?></h4>
                     <?php echo $row_rsMetinler['Metin3']; ?>
              </div>
               
@@ -32,7 +32,7 @@
  
  <source src="movie.ogg" type="video/ogg">
  
-Tarayıcınız video etiketini desteklemiyor.
+<?php echo t('video.unsupported') ?>
 
 </video>
               </div>
@@ -56,7 +56,7 @@ Tarayıcınız video etiketini desteklemiyor.
  
  <source src="movie.ogg" type="video/ogg">
  
-Tarayıcınız video etiketini desteklemiyor.
+<?php echo t('video.unsupported') ?>
 
 </video>
         

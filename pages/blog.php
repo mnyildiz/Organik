@@ -1,12 +1,12 @@
 <?php
-$query_rsListe = "SELECT * FROM tablo_blog WHERE Slider = 'Evet' ORDER BY Tarih DESC LIMIT 5";
+$query_rsListe = i18n_select_sql('blog', "b.Slider = 'Evet'", 'b.Tarih DESC', '5');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
 ?>
    <div class="banner-top">
        <div class="banner-title">
-           <h4>BLOG</h4>
+           <h4><?php echo t('page.blog') ?></h4>
        </div>
        </div>
    <?php if (!isset($_GET["tumunuGoster"])){ ?>    
@@ -14,7 +14,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
        <div class="swiper mySwiper">
            <div class="swiper-wrapper">
               
-               <?php do { ?>     
+               <?php if ($totalRows_rsListe > 0) do { ?>     
                 <div class="swiper-slide">
                    <div class="box">
                        <a href="<?php echo url("blog_detay",$row_rsListe['ID']) ?>">
@@ -42,9 +42,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
   <?php }?>
   <?php
  if (!isset($_GET["tumunuGoster"])){
- 	$query_rsListe = "SELECT * FROM tablo_blog ORDER BY Tarih DESC LIMIT 6";
+	$query_rsListe = i18n_select_sql('blog', '', 'b.Tarih DESC', '6');
  }else{
-	 $query_rsListe = "SELECT * FROM tablo_blog ORDER BY Tarih DESC";
+	 $query_rsListe = i18n_select_sql('blog', '', 'b.Tarih DESC');
  }
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
@@ -54,10 +54,10 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
 <div class="container">
        	<?php require_once('inc/social.php'); ?>
 
-          <h3>BLOG <span>+</span></h3>
+          <h3><?php echo t('page.blog') ?> <span>+</span></h3>
           <div class="row">
              
-             <?php do { ?> 
+             <?php if ($totalRows_rsListe > 0) do { ?> 
              
               <div class="col-lg-4">
                   <div class="box" data-aos="fade-up">
@@ -94,9 +94,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
   <?php
 
 if (!isset($_GET["tumunuGoster"])){
- 	$query_rsListe = "SELECT * FROM tablo_blog ORDER BY Tarih DESC LIMIT 6,6";
+	$query_rsListe = i18n_select_sql('blog', '', 'b.Tarih DESC', '6,6');
  }else{
-	 $query_rsListe = "SELECT * FROM tablo_blog ORDER BY Tarih DESC";
+	 $query_rsListe = i18n_select_sql('blog', '', 'b.Tarih DESC');
  }
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
@@ -107,7 +107,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
         
          <div class="container">
               <div class="row">
-              <?php do { ?> 
+              <?php if ($totalRows_rsListe > 0) do { ?> 
              
               <div class="col-lg-4">
                   <div class="box" data-aos="fade-up">
@@ -128,9 +128,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                
           </div>
           <div class="all">
-              <a href="<?php echo $SiteURL ?>blog?tumunuGoster=ok">
+              <a href="<?php echo sayfa_linki('blog') ?>?tumunuGoster=ok">
                   <img src="<?php echo $SiteURL ?>img/more.svg" alt="">
-              <p>Daha fazla göster</p>
+              <p><?php echo t('common.more') ?></p>
               </a>
      
       </div>

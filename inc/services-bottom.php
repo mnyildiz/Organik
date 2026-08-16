@@ -1,5 +1,5 @@
 <?php 
-$query_rsListe = "SELECT * FROM tablo_hizmetler ORDER BY SiraNo LIMIT 9";
+$query_rsListe = i18n_select_sql('hizmetler', '', 'b.SiraNo', '9');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
@@ -7,7 +7,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
 <div class="services-bottom" data-aos="fade-up">
          <div class="swiper mySwiper">
              <div class="swiper-wrapper">
-                  <?php do { ?>
+                  <?php if ($totalRows_rsListe > 0) do { ?>
              <div class="swiper-slide">
              <div class="box">
                  <a href="<?php echo url("hizmetler_detay",$row_rsListe['ID']) ?>">

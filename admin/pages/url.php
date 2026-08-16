@@ -70,7 +70,7 @@ $totalPages_rsListe = ceil($toplam/$maxRows_rsListe)-1;
                     <?php do { ?>
                     <tr>
                       <td><?php echo $row_rsListe['UrlID']; ?></td>
-                      <td><?php echo $row_rsListe['Link']; ?></td>
+                      <td><?php echo $row_rsListe['Link']; ?> <?php admin_url_ceviri_durum_rozetleri($row_rsListe['UrlID']); ?></td>
                       <td><?php echo $row_rsListe['Title']; ?></td>
                       <td><?php echo $row_rsListe['Description']; ?></td>
                       <td>

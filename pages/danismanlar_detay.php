@@ -1,17 +1,17 @@
 <?php 
-$query_rsDetay = sprintf("SELECT * FROM tablo_danismanlar WHERE ID = %s", escape($ID, "int"));
+$query_rsDetay = i18n_select_sql('danismanlar', 'b.ID = '.escape($ID, "int"));
 $rsDetay = mysqli_query($Conn, $query_rsDetay) or die(mysqli_error($Conn));
 $row_rsDetay = mysqli_fetch_assoc($rsDetay);
 $totalRows_rsDetay = mysqli_num_rows($rsDetay);
  
-$query_rsListe = "SELECT * FROM tablo_danismanlar ORDER BY SiraNo";
+$query_rsListe = i18n_select_sql('danismanlar', '', 'b.SiraNo');
 $rsListe = mysqli_query($Conn, $query_rsListe) or die(mysqli_error());
 $row_rsListe = mysqli_fetch_assoc($rsListe);
 $totalRows_rsListe = mysqli_num_rows($rsListe);
  ?>
    <div class="banner-top">
        <div class="banner-title">
-           <h4>DANIŞMANLAR</h4>
+           <h4><?php echo t('page.consultants') ?></h4>
        </div>
        </div>
       <div class="counselor-top">
@@ -32,7 +32,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
                 <img class="bottom" src="<?php echo $SiteURL ?>img/arrow-bottom.png" alt="">
                  <div class="icon">
                      <img src="<?php echo $SiteURL ?>img/egitim.svg" alt="">
-                     <p>Eğitim</p>
+                     <p><?php echo t('consultant.education') ?></p>
                  </div>
                  <div class="content">
                      <?php echo $row_rsDetay['Veri3']; ?>
@@ -43,7 +43,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
              <div class="box" data-aos="fade-up">
                  <div class="icon">
                      <img src="<?php echo $SiteURL ?>img/sertifika.svg" alt="">
-                     <p>Sertifikalar</p>
+                     <p><?php echo t('consultant.certificates') ?></p>
                  </div>
                  <div class="content">
                         <?php echo $row_rsDetay['Veri4']; ?>
@@ -54,7 +54,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
               <div class="box" data-aos="fade-up">
                  <div class="icon">
                      <img src="<?php echo $SiteURL ?>img/uzman.svg" alt="">
-                     <p>Uzmanlık <br>Alanları</p>
+                     <p><?php echo str_replace(' ', ' <br>', t('consultant.expertise')) ?></p>
                  </div>
                  <div class="content">
                     <?php echo $row_rsDetay['Veri5']; ?>
@@ -65,7 +65,7 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
               <div class="box last" data-aos="fade-up">
                  <div class="icon">
                      <img src="<?php echo $SiteURL ?>img/proje.svg" alt="">
-                     <p>Yer Aldığı <br>Projeler</p>
+                     <p><?php echo t('consultant.projects') ?></p>
                  </div>
                  <div class="content">
                     <?php echo $row_rsDetay['Veri6']; ?>
@@ -81,9 +81,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
               <div class="filter"></div>
               </div>
               <div class="counselor-menu">
-                 <h3>DANIŞMANLAR<span>+</span></h3>
+                 <h3><?php echo t('page.consultants') ?><span>+</span></h3>
                   <ul>
-                  <?php do { ?> 
+                  <?php if ($totalRows_rsListe > 0) do { ?>   
                       <li>
                       		<a href="<?php echo url("danismanlar_detay",$row_rsListe['ID']) ?>">
 					  			<?php echo $row_rsListe['Baslik']; ?>

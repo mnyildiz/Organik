@@ -17,7 +17,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "iletisimkaydet")) {
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
   
 	
-  	$Location = $SiteURL."?iletisim=ok";
+	$Location = sayfa_linki('iletisim')."?iletisim=ok";
   	yonlendir($Location);
 }
 ?>

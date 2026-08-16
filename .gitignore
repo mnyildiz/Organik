@@ -18,3 +18,9 @@ Desktop.ini
 
 # Logs
 *.log
+
+# Local database backups and production data
+database-local/
+Connections/*-full.sql
+Connections/*-data.sql
+*.sql.gz

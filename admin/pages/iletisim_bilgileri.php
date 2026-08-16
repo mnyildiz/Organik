@@ -24,6 +24,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 					   escape($Resim, "text"),
                        escape($_POST['ID'], "int"));
   $Result1 = mysqli_query($Conn, $updateSQL) or die(mysqli_error());
+  admin_cevirileri_kaydet('iletisim_bilgileri', $_POST['ID']);
   
   $_SESSION['islemMesaj'] = "ok";
   
@@ -182,6 +183,11 @@ $totalRows_rsIletisim = mysqli_num_rows($rsIletisim);
                   </div>
                 </div>
                       
+                <?php admin_ceviri_sekmeleri('iletisim_bilgileri', $row_rsIletisim['ID'], array(
+                  'Adres' => array('Adres 1', 'editor'),
+                  'Adres2' => array('Adres 2', 'editor')
+                )); ?>
+
                 <div class="form-group row">
                   <div class="offset-sm-2 col-sm-10">
                     <button type="submit" class="btn btn-danger">Yeni Bilgilerimi Kaydet</button>

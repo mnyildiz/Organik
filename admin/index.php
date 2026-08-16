@@ -9,6 +9,7 @@
 	} 
 	
 	$ACCESS = true; 
+	require_once('inc/translations.php');
 	
 	$sayfa = "anasayfa";
 	if (isset($_GET['sayfa'])) {

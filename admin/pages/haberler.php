@@ -70,7 +70,7 @@ $totalPages_rsListe = ceil($toplam/$maxRows_rsListe)-1;
                     <?php do { ?>
                     <tr>
                       <td><?php echo $row_rsListe['ID']; ?></td>
-                      <td><?php echo strip_tags($row_rsListe['Baslik']); ?></td>
+                      <td><?php echo strip_tags($row_rsListe['Baslik']); ?> <?php admin_ceviri_durum_rozetleri('haberler', $row_rsListe['ID']); ?></td>
                       <td><?php echo $row_rsListe['Tarih']; ?></td>
                       <td>
 						<?php if( $row_rsListe['Slider'] == "Evet") { ?>

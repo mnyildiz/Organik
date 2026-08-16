@@ -1,7 +1,7 @@
   <div class="banner-top blog-top">
        <div class="banner-title kvkk-title">
            
-          <h6 data-aos="fade-right">Kişisel Verilerin Korunmasına İlişkin Aydınlatma Metni</h6>
+          <h6 data-aos="fade-right"><?php echo t('privacy.title') ?></h6>
          
        </div>
        </div>

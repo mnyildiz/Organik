@@ -12,17 +12,20 @@ $query_rsIletisim = "SELECT * FROM tablo_iletisim_bilgileri";
 $rsIletisim = mysqli_query($Conn, $query_rsIletisim) or die(mysqli_error());
 $row_rsIletisim = mysqli_fetch_assoc($rsIletisim);
 $totalRows_rsIletisim = mysqli_num_rows($rsIletisim);
+$row_rsIletisim = i18n_satir_uygula($row_rsIletisim, 'iletisim_bilgileri', true);
 
 
 $query_rsAyar = "SELECT * FROM tablo_ayarlar";
 $rsAyar = mysqli_query($Conn, $query_rsAyar) or die(mysqli_error());
 $row_rsAyar = mysqli_fetch_assoc($rsAyar);
 $totalRows_rsAyar = mysqli_num_rows($rsAyar);
+$row_rsAyar = i18n_satir_uygula($row_rsAyar, 'ayarlar', true);
 
 $query_rsMetinler = "SELECT * FROM tablo_metinler";
 $rsMetinler = mysqli_query($Conn, $query_rsMetinler) or die(mysqli_error());
 $row_rsMetinler = mysqli_fetch_assoc($rsMetinler);
 $totalRows_rsMetinler = mysqli_num_rows($rsMetinler);
+$row_rsMetinler = i18n_satir_uygula($row_rsMetinler, 'metinler', true);
 
 $Adres = $row_rsIletisim['Adres'];
 $Adres2 = $row_rsIletisim['Adres2'];
@@ -103,11 +106,30 @@ function yonlendir($Location){
 
 }
 function url($Sayfa,$ID){
+	return url_dil($Sayfa, $ID, dil());
+}
+
+function url_dil($Sayfa, $ID, $dilKodu, $turkceFallback = true){
 	global $Conn;
 	global $SiteURL;
 	$query_rsUrl = sprintf("SELECT * FROM tablo_url WHERE Sayfa=%s AND ID=%s",escape($Sayfa,"text"),escape($ID,"int"));
 	$rsUrl = mysqli_query($Conn, $query_rsUrl) or die(mysqli_error());
 	$row_rsUrl = mysqli_fetch_assoc($rsUrl);
+	if (!$row_rsUrl) {
+		return $SiteURL;
+	}
+	if ($dilKodu !== 'tr') {
+		$dilEsc = mysqli_real_escape_string($Conn, $dilKodu);
+		$urlID = (int) $row_rsUrl['UrlID'];
+		$rsCeviriUrl = mysqli_query($Conn, "SELECT * FROM tablo_url_ceviri WHERE UrlID={$urlID} AND DilKodu='{$dilEsc}' AND YayinDurumu=1 LIMIT 1");
+		$rowCeviriUrl = $rsCeviriUrl ? mysqli_fetch_assoc($rsCeviriUrl) : null;
+		if ($rowCeviriUrl) {
+			return $SiteURL.dil_on_eki($dilKodu).$rowCeviriUrl['Link'];
+		}
+		if (!$turkceFallback) {
+			return null;
+		}
+	}
 	return $SiteURL.$row_rsUrl["Link"];
 }
 function seoURLKaydet($sayfa,$id,$title,$desc){
@@ -147,7 +169,10 @@ function seoURLKaydet($sayfa,$id,$title,$desc){
 }
 function seoURLSil($Sayfa,$ID){
 	global $Conn;
-	mysqli_query($Conn, "DELETE FROM tablo_url WHERE Sayfa = ".escape($Sayfa,"text")." AND ID = ".escape($ID,"int")."");
+	$sayfaEsc = escape($Sayfa,"text");
+	$idEsc = escape($ID,"int");
+	mysqli_query($Conn, "DELETE c FROM tablo_url_ceviri c INNER JOIN tablo_url u ON u.UrlID=c.UrlID WHERE u.Sayfa={$sayfaEsc} AND u.ID={$idEsc}");
+	mysqli_query($Conn, "DELETE FROM tablo_url WHERE Sayfa = ".$sayfaEsc." AND ID = ".$idEsc."");
 
 }
 
