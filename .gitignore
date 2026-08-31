@@ -24,3 +24,6 @@ database-local/
 Connections/*-full.sql
 Connections/*-data.sql
 *.sql.gz
+
+# Test modu isareti (sadece test sunucusunda olusturulur)
+Connections/TEST_ORTAMI

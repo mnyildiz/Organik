@@ -80,24 +80,107 @@ Hosting panelinde phpMyAdmin kullanılıyorsa:
 İşlem sonunda phpMyAdmin sol menüsünde `tablo_blog`, `tablo_haberler`,
 `tablo_hizmetler` gibi tablolar görünmelidir.
 
-## 5. `tablo_blog` kontrolü
+### Komut satırı (cmd) ile yedek ve geri yükleme
 
-Paylaşılan şemada `tablo_blog.ID` alanı `AUTO_INCREMENT` görünmüyor. Mevcut
-admin kodu ise yeni blog kaydı eklerken bu özelliğe güveniyor.
+Sunucuda phpMyAdmin yoksa aynı işlemler `mysqldump` ve `mysql` komutlarıyla
+yapılır. Komutlar **cmd.exe** içinde (yönetici olarak) çalıştırılır.
+`-p` parametresi parolayı sorar; parolayı komuta yazmayın.
 
-phpMyAdmin içinde:
+MySQL'in `bin` klasörünü bulun (`where mysqldump` veya services.msc →
+MySQL servisi → Path to executable) ve o klasöre geçin:
 
-1. `organik_staging` veritabanını seçin.
-2. Üst menüden **SQL** sekmesine girin.
-3. Aşağıdaki sorguyu yapıştırıp çalıştırın:
-
-```sql
-SHOW CREATE TABLE tablo_blog;
+```cmd
+cd /d "C:\Program Files\MySQL\MySQL Server 8.0\bin"
 ```
 
-Sonuçta `ID` satırında `AUTO_INCREMENT` yazıp yazmadığını kontrol edin. Sonucu
-not alın veya ekran görüntüsünü paylaşın. Bu kontrol yapılmadan `tablo_blog`
-yapısını değiştirmeyin.
+Canlı veritabanı yedeği (`--result-file` kullanın; PowerShell'de `>` ile
+yönlendirme Türkçe karakterleri bozar):
+
+```cmd
+mkdir C:\Yedek
+mysqldump -u root -p --default-character-set=utf8 --single-transaction --routines --triggers --result-file=C:\Yedek\organik-db-2026-08-30.sql organik
+```
+
+Dosya yedeği ve test klasörüne kopya:
+
+```cmd
+robocopy C:\WebSites\organik C:\Yedek\organik-files-2026-08-30 /E
+robocopy C:\WebSites\organik C:\WebSites\organik_test /E
+```
+
+Test veritabanı ve kullanıcısı (önce `SHOW CREATE DATABASE organik;` ile
+canlının karakter setini görüp aynısını kullanın):
+
+```cmd
+mysql -u root -p -e "CREATE DATABASE organik_staging CHARACTER SET utf8 COLLATE utf8_general_ci;"
+mysql -u root -p -e "CREATE USER 'organik_test'@'localhost' IDENTIFIED BY 'TEST_PAROLASI_BURAYA'; GRANT ALL PRIVILEGES ON organik_staging.* TO 'organik_test'@'localhost'; FLUSH PRIVILEGES;"
+```
+
+Parolayı `Connections/Conn.php` test bloğundaki değerle aynı yapın.
+
+Yedeği test veritabanına geri yükleme ve migration:
+
+```cmd
+mysql -u root -p --default-character-set=utf8 organik_staging < C:\Yedek\organik-db-2026-08-30.sql
+mysql -u root -p --default-character-set=utf8 organik_staging < C:\WebSites\organik_test\database\migrations\001_multilanguage.sql
+```
+
+Doğrulama:
+
+```cmd
+mysql -u root -p -e "SELECT COUNT(*) FROM tablo_blog;" organik
+mysql -u root -p -e "SELECT COUNT(*) FROM tablo_blog;" organik_staging
+mysql -u root -p -e "SHOW TABLES LIKE '%ceviri';" organik_staging
+mysql -u organik_test -p -e "SELECT 1;" organik_staging
+```
+
+İlk iki sayı eşit olmalı; üçüncü komut 11 `_ceviri` tablosu listelemeli.
+
+Site açılınca `caching_sha2_password` hatası görülürse:
+
+```cmd
+mysql -u root -p -e "ALTER USER 'organik_test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'TEST_PAROLASI_BURAYA';"
+```
+
+## 5. `tablo_blog` AUTO_INCREMENT düzeltmesi
+
+Canlı veritabanı yedeğinde doğrulandı (30 Ağustos 2026): `tablo_blog.ID`
+alanında `AUTO_INCREMENT` yok; diğer tüm tablolarda var. Admin paneli yeni
+blog eklerken bu özelliğe güvendiği için düzeltilmesi gerekir. Bu sorun çoklu
+dil geliştirmesinden bağımsızdır ancak blog çevirileri kayıt ID'sine bağlandığı
+için çoklu dil için de zorunludur.
+
+Düzeltme dosyası:
+
+```text
+database/migrations/002_tablo_blog_auto_increment.sql
+```
+
+Önce staging'de kontrol edin (üç komut, tek tek):
+
+```cmd
+mysql -u root -p -e "SELECT @@sql_mode;" organik_staging
+mysql -u root -p -e "SELECT MIN(ID), MAX(ID), COUNT(*) FROM tablo_blog;" organik_staging
+mysql -u root -p -e "SELECT ID, Baslik FROM tablo_blog WHERE ID <= 0;" organik_staging
+```
+
+Üçüncü sorgu **boş** dönmelidir. `ID = 0` olan bir satır varsa önce o satıra
+uygun bir ID verilmeli ve `tablo_url` içindeki karşılığı da güncellenmelidir;
+aksi halde ALTER o satırın ID'sini değiştirir ve linki kopar.
+
+Kontrol temizse staging'de çalıştırın:
+
+```cmd
+mysql -u root -p --default-character-set=utf8 organik_staging < C:\WebSites\organik_test\database\migrations\002_tablo_blog_auto_increment.sql
+mysql -u root -p -e "SHOW CREATE TABLE tablo_blog\G" organik_staging
+```
+
+İkinci komutun çıktısında `ID` satırında `AUTO_INCREMENT` görünmelidir. Sonra
+test sitesinin admin panelinden yeni bir blog yazısı ekleyip listede
+göründüğünü doğrulayın.
+
+Canlıya geçişte (§16) bu dosya `001_multilanguage.sql` ile birlikte
+çalıştırılır.
 
 ## 6. Çoklu dil tablolarının kurulması
 
@@ -134,35 +217,120 @@ tablo_url_ceviri
 Bir hata mesajı çıkarsa aynı işlemi tekrar tekrar çalıştırmayın. Hata metnini
 tam olarak kaydedip paylaşın.
 
-## 7. Staging bağlantı ayarları
+## 6a. Hazır EN/DE içerik çevirilerinin yüklenmesi (isteğe bağlı)
 
-Staging sitesinin veritabanı bağlantısı şu dosyada bulunur:
+Tüm mevcut Türkçe içeriğin (9 hizmet, 29 blog yazısı, 120 haber, danışmanlar,
+site metinleri, slider, iletişim ve tüm URL/SEO kayıtları) İngilizce ve Almanca
+çevirileri hazır bir SQL dosyası olarak üretilmiştir:
 
 ```text
-Connections/Conn.php
+database/migrations/003_ceviriler_en_de.sql
 ```
 
-Staging kopyasında şu değerlerin staging veritabanını gösterdiğinden emin olun:
+Özellikleri:
+
+- `INSERT IGNORE` kullanır: admin panelinden elle girilmiş bir çeviri varsa
+  **üzerine yazmaz**, yalnızca eksik kayıtları ekler.
+- Tüm kayıtlar `YayinDurumu=1` (yayında) olarak gelir; `tablo_ayarlar_ceviri`
+  satırları sayesinde dil seçicide EN ve DE görünür hale gelir.
+- Mevcut Türkçe tablolara dokunmaz; yalnızca `_ceviri` tablolarına yazar.
+- `001_multilanguage.sql` çalıştırıldıktan SONRA uygulanmalıdır.
+
+Staging'de çalıştırmak için (cmd):
+
+```cmd
+mysql -u root -p --default-character-set=utf8mb4 organik_staging < C:\WebSites\organik_test\database\migrations\003_ceviriler_en_de.sql
+```
+
+Doğrulama:
+
+```cmd
+mysql -u root -p -e "SELECT DilKodu, COUNT(*) FROM tablo_blog_ceviri GROUP BY DilKodu;" organik_staging
+mysql -u root -p -e "SELECT DilKodu, COUNT(*) FROM tablo_haberler_ceviri GROUP BY DilKodu;" organik_staging
+mysql -u root -p -e "SELECT DilKodu, COUNT(*) FROM tablo_url_ceviri GROUP BY DilKodu;" organik_staging
+```
+
+Beklenen: blog 29+29, haberler 120+120, url 176+176 civarı (en/de).
+
+Not: Çeviriler makine destekli üretilmiştir. Test ve ilk yayın için uygundur;
+canlıda kalıcı olmadan önce özellikle hizmet sayfaları ve hukuki metinlerin
+dili bilen biri tarafından gözden geçirilmesi önerilir. Admin panelinden
+yapılan her düzeltme kalıcıdır (dosya tekrar çalıştırılsa bile ezilmez).
+
+## 7. Test modu anahtarı (`isTest`)
+
+`Connections/Conn.php` artık iki ayarı birden içerir: canlı ve test. Hangisinin
+kullanılacağını **bir dosyanın var olup olmaması** belirler:
+
+```text
+Connections/TEST_ORTAMI
+```
+
+- Bu dosya varsa site **test modunda** çalışır.
+- Bu dosya yoksa site **canlı modunda** çalışır.
+
+Dosyanın içeriği önemli değildir; boş bir metin dosyası yeterlidir. Test
+sunucusunda `Connections` klasörüne sağ tıklayıp **Yeni → Metin Belgesi**
+oluşturun ve adını uzantısız olarak `TEST_ORTAMI` yapın.
+
+Canlı sunucuda bu dosya **asla** bulunmamalıdır. `.gitignore` içinde olduğu
+için Git ile taşınmaz.
+
+Test modu açıkken kod kendiliğinden şunları yapar:
+
+- `organik_staging` veritabanına bağlanır (canlı DB'ye dokunmaz).
+- Site ve admin adreslerini tarayıcıdaki adresten türetir; port hangisi olursa
+  olsun (`http://www.organikik.com.tr:8081/` gibi) linkler doğru çalışır.
+- PHP hatalarını ekranda gösterir.
+- `X-Robots-Tag: noindex` başlığı göndererek arama motorlarını uzak tutar.
+
+Test veritabanı parolası `Conn.php` içindeki test bloğunda yazılıdır:
 
 ```php
-$hostname_Conn = "localhost";
-$database_Conn = "organik_staging";
-$username_Conn = "STAGING_KULLANICISI";
-$password_Conn = "STAGING_PAROLASI";
+$username_Conn = "organik_test";
+$password_Conn = "TEST_PAROLASI_BURAYA";
 ```
 
-Site ve admin adresleri de staging alan adını göstermelidir:
+4. bölümde MySQL kullanıcısını oluştururken parolayı buradaki değerle aynı
+verin, ya da buradaki değeri kendi parolanızla değiştirin.
 
-```php
-$AdminURL = "https://test.organikik.com.tr/admin/";
-$SiteURL = "https://test.organikik.com.tr/";
-```
+Ayrıca `web.config` içindeki HTTPS yönlendirme kuralı yalnızca 80 portunda
+çalışacak şekilde değiştirildi. Bu sayede test sitesi farklı bir portta HTTP
+olarak açılabilir; canlı site ise eskisi gibi HTTPS'e yönlenir. Aynı
+`web.config` dosyası her iki ortamda da kullanılabilir.
 
-Bu örnek kullanıcı adı ve parolayı aynen kullanmayın; hosting panelinin verdiği
-gerçek staging bilgilerini yazın. Gerçek parolayı Git'e kaydetmeyin.
+## 7a. IIS üzerinde test sitesi açılması (port ile)
 
-Canlı `Connections/Conn.php` dosyasını staging bilgileriyle değiştirip yanlışlıkla
-canlıya yüklemeyin. Staging ve canlı bağlantı dosyaları ayrı tutulmalıdır.
+Ayrı alt alan adı yerine aynı sunucuda farklı bir port kullanılabilir.
+Örnek port: `8081`.
+
+1. Canlı klasörün tamamını (`uploads/` ve `admin/uploads/` dahil) şuraya
+   kopyalayın: `C:\WebSites\organik_test\`
+2. Bu repodaki güncel dosyaları aynı klasörün üzerine yazın.
+3. `C:\WebSites\organik_test\Connections\TEST_ORTAMI` boş dosyasını oluşturun.
+4. IIS Manager → **Application Pools → Add Application Pool**
+   - Name: `organik_test`
+   - .NET CLR version: **No Managed Code**
+   - Identity: canlı sitenin pool'u ile aynı.
+5. IIS Manager → **Sites → Add Website**
+   - Site name: `organik_test`
+   - Application pool: `organik_test`
+   - Physical path: `C:\WebSites\organik_test`
+   - Binding: `http`, IP `All Unassigned`, Port `8081`, Host name boş.
+6. Siteyi seçip **Handler Mappings** içinde `*.php` için PHP FastCGI satırının
+   bulunduğunu doğrulayın. Yoksa canlı siteden aynı ayarı ekleyin.
+7. **Default Document** listesinde `index.php` olduğunu doğrulayın.
+8. `C:\WebSites\organik_test` klasörüne `IIS AppPool\organik_test`
+   kullanıcısı için **Modify** izni verin (görsel yüklemeleri için gerekli).
+9. Windows Güvenlik Duvarı → Inbound Rules → TCP `8081` için Allow kuralı
+   ekleyin. Sunucu bir bulut sağlayıcıdaysa oradaki güvenlik duvarında da
+   portu açın.
+10. Tarayıcıda `http://www.organikik.com.tr:8081/` adresini açın. Adres
+    çubuğunda `:8081` kalmalıdır. Kayboluyorsa `TEST_ORTAMI` dosyası yanlış
+    yerdedir veya `web.config` güncellenmemiştir.
+
+Test bittiğinde IIS'te `organik_test` sitesini **Stop** yapın ve güvenlik
+duvarı kuralını kapatın.
 
 ## 8. Güncel kodların staging sitesine yüklenmesi
 
@@ -288,7 +456,9 @@ da denenebilir.
 
 ## 13. Test edilecek adresler
 
-Staging alan adınıza göre şu adresleri kontrol edin:
+Staging alan adınıza göre şu adresleri kontrol edin (port yöntemi
+kullanıldıysa `https://test.organikik.com.tr` yerine
+`http://www.organikik.com.tr:8081` yazın):
 
 ```text
 https://test.organikik.com.tr/
@@ -354,17 +524,18 @@ Staging testlerinin tamamı başarılı olduktan sonra:
 
 1. Canlı veritabanı ve dosyaların tekrar güncel yedeğini alın.
 2. Mümkünse kısa bir bakım zamanı belirleyin.
-3. Canlı veritabanında `001_multilanguage.sql` migration dosyasını çalıştırın.
+3. Canlı veritabanında `001_multilanguage.sql`, `002_tablo_blog_auto_increment.sql`
+   ve `003_ceviriler_en_de.sql` migration dosyalarını sırayla çalıştırın.
 4. Güncel kod dosyalarını canlı sunucuya yükleyin.
-5. Canlı `Connections/Conn.php` dosyasının canlı veritabanı ve canlı URL
-   bilgilerini kullandığını kontrol edin.
+5. Canlı sunucuda `Connections/TEST_ORTAMI` dosyasının **bulunmadığını**
+   kontrol edin; bu dosya varsa canlı site test veritabanına bağlanmaya çalışır.
 6. Önce Türkçe siteyi hızlıca test edin.
 7. Admin paneline girip örnek EN/DE içerikleri kontrol edin.
 8. `/en`, `/de` ve `/sitemap.xml` adreslerini kontrol edin.
 9. Hata kayıtlarını ve iletişim/e-bülten formlarını takip edin.
 
-Canlıya yüklerken staging veritabanı parolasını veya staging URL'sini canlı
-`Connections/Conn.php` içine taşımayın.
+Canlı ve test ayarları aynı `Conn.php` içinde bulunduğundan dosyayı ayrıca
+düzenlemek gerekmez; tek fark `TEST_ORTAMI` dosyasının varlığıdır.
 
 ## 17. Sorun çıkarsa geri dönüş
 
@@ -385,15 +556,18 @@ veritabanı yedeği olmadan canlı migration uygulanmamalıdır.
 - [ ] Canlı dosya ve `uploads/` yedeği alındı.
 - [ ] Ayrı staging veritabanı oluşturuldu.
 - [ ] Tam veritabanı yedeği staging'e aktarıldı.
-- [ ] `SHOW CREATE TABLE tablo_blog` sonucu kontrol edildi.
+- [x] `SHOW CREATE TABLE tablo_blog` sonucu kontrol edildi (AUTO_INCREMENT yok).
+- [ ] `002_tablo_blog_auto_increment.sql` staging'de çalıştırıldı ve yeni blog eklenebildi.
 - [ ] Çoklu dil migration'ı staging'de çalıştırıldı.
 - [ ] Güncel kodlar staging'e yüklendi.
+- [ ] Staging'de `Connections/TEST_ORTAMI` dosyası oluşturuldu.
 - [ ] Türkçe site regresyon testi tamamlandı.
-- [ ] Örnek İngilizce içerik girilip yayınlandı.
-- [ ] Örnek Almanca içerik girilip yayınlandı.
+- [ ] `003_ceviriler_en_de.sql` staging'de çalıştırıldı (veya örnek EN içerik elle girildi).
+- [ ] `/en` ve `/de` sayfalarında çeviriler kontrol edildi.
 - [ ] Menü, arama, iletişim ve e-bülten test edildi.
 - [ ] Mobil görünüm kontrol edildi.
 - [ ] SEO etiketleri ve sitemap kontrol edildi.
 - [ ] Canlıya geçmeden önce yeniden yedek alındı.
+- [ ] Canlı sunucuda `Connections/TEST_ORTAMI` dosyası olmadığı doğrulandı.
 - [ ] Canlı yayın sonrası hızlı kontrol tamamlandı.
 
