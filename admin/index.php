@@ -41,7 +41,17 @@
 <div class="wrapper">
   <?php require_once('inc/header.php'); ?>
   <?php require_once('inc/sidebar.php'); ?>
-        <?php require_once('pages/'.$sayfa.'.php'); ?>
+        <?php
+          try {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && empty($_FILES) && !empty($_SERVER['CONTENT_LENGTH'])) {
+              throw new RuntimeException('Dosya yükleme sınırı aşıldı. Daha küçük bir görsel seçin.');
+            }
+            require_once('pages/'.$sayfa.'.php');
+          } catch (RuntimeException $hata) {
+            echo '<div class="content-wrapper p-3"><div class="alert alert-danger" role="alert">'.htmlspecialchars($hata->getMessage(), ENT_QUOTES, 'UTF-8').'</div>';
+            echo '<button type="button" class="btn btn-secondary" onclick="history.back()">Forma geri dön</button></div>';
+          }
+        ?>
 	<?php require_once('inc/footer.php'); ?>
 </div>
 </body>
@@ -83,7 +93,10 @@
 			success: function(url) {
 				var image = $("<img>").attr("src", url);
 					$(editor).summernote("insertNode", image[0]);
-				}
+				},
+                error: function(xhr) {
+                    alert(xhr.responseText || 'Görsel yüklenemedi. Daha küçük bir dosya ile tekrar deneyin.');
+                }
 			});
 		}
 </script>

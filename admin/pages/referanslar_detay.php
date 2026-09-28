@@ -24,14 +24,23 @@ $rsDetay = mysqli_query($Conn, $query_rsDetay) or die(mysqli_error());
 $row_rsDetay = mysqli_fetch_assoc($rsDetay);
 $totalRows_rsDetay = mysqli_num_rows($rsDetay);
 
+// Eski kayıtlarda renkli logo Resim2 alanındadır.
+$ReferansResmi = !empty($row_rsDetay['Resim2']) ? $row_rsDetay['Resim2'] : (isset($row_rsDetay['Resim']) ? $row_rsDetay['Resim'] : '');
+
+if (isset($_POST['islem']) && in_array($_POST['islem'], array('kaydet', 'guncelle'), true)) {
+    $Resim = $ReferansResmi;
+    if (isset($_FILES['Resim']) && $_FILES['Resim']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $Resim = upload("../uploads/", "Resim", "", 400, 200);
+    }
+    if ($Resim === '') {
+        throw new RuntimeException('Lütfen renkli bir logo seçin.');
+    }
+}
+
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
-	
-	$Resim = upload("../uploads/","Resim","ResimEski");
-	$Resim2 = upload("../uploads/","Resim2","Resim2Eski");
- 		
   $insertSQL = sprintf("INSERT INTO tablo_referanslar (Resim, Resim2, Baslik, SiraNo) VALUES (%s, %s, %s, %s)",
                         escape($Resim, "text"),
-						escape($Resim2, "text"),
+						escape($Resim, "text"),
                         escape($_POST['Baslik'], "text"),
                         escape($_POST['SiraNo'], "int"));
   $Result1 = mysqli_query($Conn, $insertSQL) or die(mysqli_error());
@@ -43,13 +52,9 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 }
 
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
-	
-	$Resim = upload("../uploads/","Resim","ResimEski");
-	$Resim2 = upload("../uploads/","Resim2","Resim2Eski");
- 	
   $updateSQL = sprintf("UPDATE tablo_referanslar SET Resim=%s, Resim2=%s, Baslik=%s, SiraNo=%s WHERE ID=%s",
                        escape($Resim, "text"),
-					   escape($Resim2, "text"),
+					   escape($Resim, "text"),
                        escape($_POST['Baslik'], "text"),
                        escape($_POST['SiraNo'], "int"),
                        escape($_POST['ID'], "int"));
@@ -95,29 +100,23 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                     <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
                       
                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Resim 1</label>
+                        <label class="col-sm-2 col-form-label" for="Resim">Renkli logo</label>
                         <div class="col-sm-10">
-                              <div class="custom-file">
-                                	<input type="file" class="custom-file-input" name="Resim" id="Resim">
-                                	<label class="custom-file-label" for="Resim">Resim Seç</label>
-                                </div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="Resim" id="Resim" accept=".png,.jpg,.jpeg,.gif,.webp,.svg"<?php if ($ReferansResmi === '') echo ' required'; ?>>
+                                <label class="custom-file-label" for="Resim">Logo seç</label>
+                            </div>
+                            <small class="form-text text-muted">Tek bir renkli logo yeterlidir. Büyük görseller oranları korunarak en fazla 400×200 piksele küçültülür. SVG logoların kalitesi korunur.</small>
+                            <?php if ($ReferansResmi !== '') { ?>
+                            <img src="<?php echo $SiteURL ?>uploads/<?php echo htmlspecialchars($ReferansResmi, ENT_QUOTES, 'UTF-8'); ?>" alt="Mevcut logo" class="mt-3 p-2 bg-light" style="max-width:200px;max-height:100px;object-fit:contain">
+                            <?php } ?>
                         </div>
                       </div>
-                      
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Resim 2</label>
-                        <div class="col-sm-10">
-                              <div class="custom-file">
-                                	<input type="file" class="custom-file-input" name="Resim2" id="Resim2">
-                                	<label class="custom-file-label" for="Resim2">Resim Seç</label>
-                                </div>
-                        </div>
-                      </div>
-                     
+
                       <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Başlık</label>
                         <div class="col-sm-10">
-                          <input name="Baslik" type="text" class="form-control" placeholder="Baslik" value="<?php echo $row_rsDetay['Baslik']; ?>">
+                          <input name="Baslik" type="text" class="form-control" placeholder="Baslik" value="<?php echo htmlspecialchars(isset($row_rsDetay['Baslik']) ? $row_rsDetay['Baslik'] : '', ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
                       </div>
                       
@@ -125,7 +124,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                       <div class="form-group row">
                         <label class="col-sm-2 col-form-label">SiraNo</label>
                         <div class="col-sm-10">
-                          <input name="SiraNo" type="text" class="form-control" placeholder="SiraNo" value="<?php echo $row_rsDetay['SiraNo']; ?>">
+                          <input name="SiraNo" type="text" class="form-control" placeholder="SiraNo" value="<?php echo isset($row_rsDetay['SiraNo']) ? $row_rsDetay['SiraNo'] : ''; ?>">
                         </div>
                       </div>
                       
@@ -146,8 +145,6 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                         	<input type="hidden" name="islem" value="kaydet">
                             
                         <?php }?>
-                        <input type="hidden" name="ResimEski" value="<?php echo $row_rsDetay['Resim']; ?>">
-                        <input type="hidden" name="Resim2Eski" value="<?php echo $row_rsDetay['Resim2']; ?>">
                      </form>
                   </div>
                 <!-- /.tab-pane --><!-- /.tab-pane -->

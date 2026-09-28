@@ -1,12 +1,19 @@
-<?php 
+<?php
 require_once('../../Connections/Conn.php');
-if ($_FILES['Resimmm']['name']) {
-	if (!$_FILES['Resimmm']['error']) {
-		$Resimmm = rand(10000,999999)."_".$_FILES["Resimmm"]["name"];
-		move_uploaded_file($_FILES["Resimmm"]["tmp_name"],"../../uploads/".$Resimmm);
-		echo $SiteURL.'uploads/' . $Resimmm;
-	}else{
-	  echo  'Dosya yukleme hatası:  '.$_FILES['Resimmm']['error'];
-	}
+header('Content-Type: text/plain; charset=UTF-8');
+
+if (!isset($_SESSION['UserID'])) {
+    http_response_code(401);
+    exit('Oturumunuz sona erdi. Yeniden giriş yapın.');
 }
-?>
+
+try {
+    if (!isset($_FILES['Resimmm']) || $_FILES['Resimmm']['error'] === UPLOAD_ERR_NO_FILE) {
+        throw new RuntimeException('Görsel alınamadı. Dosya boyutunu kontrol edip tekrar deneyin.');
+    }
+    $Resimmm = upload('../../uploads/', 'Resimmm', '');
+    echo $SiteURL.'uploads/'.$Resimmm;
+} catch (RuntimeException $hata) {
+    http_response_code(422);
+    echo $hata->getMessage();
+}

@@ -22,7 +22,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 		$Parola = $_POST['ParolaEski'];
 	}
 	
-	$Resim = upload("./uploads/img/","Resim","ResimEski");
+	$Resim = upload("./uploads/img/","Resim","ResimEski",400,400);
   
   $updateSQL = sprintf("UPDATE tablo_login SET Unvan=%s, Adi=%s, Soyadi=%s, Telefon=%s, Parola=%s, Email=%s, Resim=%s, Hakkimda=%s WHERE UserID=%s",
                        escape($_POST['Unvan'], "text"),

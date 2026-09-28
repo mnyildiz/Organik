@@ -25,6 +25,8 @@ return array(
     'home.show_all' => 'TÜMÜNÜ GÖR',
     'home.news' => 'Haberler ve Duyurular',
     'home.go_to_news' => 'HABERE GİT',
+    'references.previous' => 'Önceki referanslar',
+    'references.next' => 'Sonraki referanslar',
     'common.more' => 'Daha fazla göster',
     'common.share' => 'Bunu Paylaş',
     'footer.subscribe_title' => 'Organik’ten son gelişmeler için abone ol',

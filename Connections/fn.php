@@ -6,7 +6,7 @@ $totalRows_rsSeo = mysqli_num_rows($rsSeo);
 $Title = $row_rsSeo["Title"];
 $Description = $row_rsSeo["Description"];
 
-$v = "?v=4";
+$v = "?v=5";
 
 $query_rsIletisim = "SELECT * FROM tablo_iletisim_bilgileri";
 $rsIletisim = mysqli_query($Conn, $query_rsIletisim) or die(mysqli_error());
@@ -47,15 +47,130 @@ $ResimIletisim = $row_rsIletisim['Resim'];
 $Telefon = explode("<br>",$row_rsIletisim['TelNo']);
 $Telefon = $Telefon[0];
 
-function upload($dizin,$dosya,$eski){
-	if($_FILES[$dosya]["name"] !=""){
-		$yeni_isim = rand(10000,999999)."_".basename($_FILES[$dosya]["name"]);
-    	$tmp_name = $_FILES[$dosya]["tmp_name"];
-   		move_uploaded_file($tmp_name, $dizin.$yeni_isim);
-	}else{
-		$yeni_isim = $_POST[$eski];
-	}
-	return $yeni_isim;
+function upload($dizin, $dosya, $eski, $maxGenislik = 1600, $maxYukseklik = 1600){
+    if (!isset($_FILES[$dosya]) || $_FILES[$dosya]['error'] === UPLOAD_ERR_NO_FILE) {
+        return isset($_POST[$eski]) ? $_POST[$eski] : '';
+    }
+
+    $yukleme = $_FILES[$dosya];
+    if ($yukleme['error'] !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Görsel yüklenemedi. Dosya boyutunu kontrol edip tekrar deneyin.');
+    }
+    $tmp = $yukleme['tmp_name'];
+    $uzanti = strtolower(pathinfo($yukleme['name'], PATHINFO_EXTENSION));
+    $formatlar = array('jpg' => IMAGETYPE_JPEG, 'jpeg' => IMAGETYPE_JPEG, 'png' => IMAGETYPE_PNG, 'gif' => IMAGETYPE_GIF, 'webp' => IMAGETYPE_WEBP);
+
+    if ($uzanti === 'svg') {
+        $svg = new DOMDocument();
+        if (!@$svg->load($tmp, LIBXML_NONET) || !$svg->documentElement || $svg->documentElement->localName !== 'svg' || $svg->doctype) {
+            throw new RuntimeException('Geçerli bir SVG görsel seçin.');
+        }
+        foreach ($svg->getElementsByTagName('*') as $eleman) {
+            if (in_array(strtolower($eleman->localName), array('script', 'foreignobject'), true)) {
+                throw new RuntimeException('SVG görsel etkin içerik barındıramaz. PNG olarak yükleyebilirsiniz.');
+            }
+            foreach ($eleman->attributes as $ozellik) {
+                if (stripos($ozellik->name, 'on') === 0 || ($ozellik->localName === 'href' && substr(trim($ozellik->value), 0, 1) !== '#')) {
+                    throw new RuntimeException('SVG görsel harici kaynak veya etkin içerik barındıramaz. PNG olarak yükleyebilirsiniz.');
+                }
+            }
+        }
+    } else {
+        $boyut = @getimagesize($tmp);
+        if (!isset($formatlar[$uzanti]) || !$boyut || $boyut[2] !== $formatlar[$uzanti]) {
+            throw new RuntimeException('PNG, JPEG, GIF, WebP veya SVG biçiminde bir görsel seçin.');
+        }
+        $yon = 1;
+        if ($boyut[2] === IMAGETYPE_JPEG && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($tmp);
+            $yon = isset($exif['Orientation']) ? (int) $exif['Orientation'] : 1;
+        }
+        $genislik = $boyut[0];
+        $yukseklik = $boyut[1];
+        if (in_array($yon, array(5, 6, 7, 8), true)) {
+            $genislik = $boyut[1];
+            $yukseklik = $boyut[0];
+        }
+        $oran = min(1, $maxGenislik / $genislik, $maxYukseklik / $yukseklik);
+        if ($oran < 1) {
+            // GD, GIF animasyonunun yalnızca ilk karesini işler; animasyonu bozmayalım.
+            if ($boyut[2] === IMAGETYPE_GIF) {
+                throw new RuntimeException('GIF görsel en fazla '.$maxGenislik.'×'.$maxYukseklik.' piksel olmalı. Otomatik küçültme için PNG, JPEG veya WebP yükleyin.');
+            }
+            if (!function_exists('imagecreatefromstring')) {
+                throw new RuntimeException('Sunucuda görsel küçültme desteği etkin değil. En fazla '.$maxGenislik.'×'.$maxYukseklik.' piksel bir görsel yükleyin.');
+            }
+            $genislik = max(1, (int) round($genislik * $oran));
+            $yukseklik = max(1, (int) round($yukseklik * $oran));
+
+            // Sıkıştırılmış dosya küçük olsa da GD, açılmış pikseller için bellek kullanır.
+            $limit = trim(ini_get('memory_limit'));
+            $bellekLimiti = (float) $limit;
+            switch (strtolower(substr($limit, -1))) {
+                case 'g': $bellekLimiti *= 1024;
+                case 'm': $bellekLimiti *= 1024;
+                case 'k': $bellekLimiti *= 1024;
+            }
+            if ($bellekLimiti <= 0) {
+                $bellekLimiti = 512 * 1024 * 1024;
+            }
+            $gerekliBellek = ($boyut[0] * $boyut[1] + $genislik * $yukseklik) * 8 + filesize($tmp) + 16 * 1024 * 1024;
+            if ($gerekliBellek + memory_get_usage(true) > $bellekLimiti) {
+                throw new RuntimeException('Bu görsel sunucuda küçültülemeyecek kadar büyük. Daha düşük çözünürlüklü bir görsel yükleyin.');
+            }
+
+            $kaynak = @imagecreatefromstring(file_get_contents($tmp));
+            if (!$kaynak) {
+                throw new RuntimeException('Görsel işlenemedi. Farklı bir görsel seçin.');
+            }
+            $hedef = null;
+            try {
+                if (in_array($yon, array(2, 5, 7), true)) {
+                    imageflip($kaynak, IMG_FLIP_HORIZONTAL);
+                } elseif ($yon === 4) {
+                    imageflip($kaynak, IMG_FLIP_VERTICAL);
+                }
+                $acilar = array(3 => 180, 5 => 90, 6 => -90, 7 => -90, 8 => 90);
+                if (isset($acilar[$yon])) {
+                    $donmus = imagerotate($kaynak, $acilar[$yon], 0);
+                    if (!$donmus) {
+                        throw new RuntimeException('Görselin yönü düzeltilemedi.');
+                    }
+                    imagedestroy($kaynak);
+                    $kaynak = $donmus;
+                }
+                $hedef = imagecreatetruecolor($genislik, $yukseklik);
+                if (!$hedef) {
+                    throw new RuntimeException('Görsel küçültülemedi. Daha düşük çözünürlüklü bir görsel yükleyin.');
+                }
+                imagealphablending($hedef, false);
+                imagesavealpha($hedef, true);
+                imagefill($hedef, 0, 0, imagecolorallocatealpha($hedef, 0, 0, 0, 127));
+                if (!imagecopyresampled($hedef, $kaynak, 0, 0, 0, 0, $genislik, $yukseklik, imagesx($kaynak), imagesy($kaynak))) {
+                    throw new RuntimeException('Görsel küçültülemedi. Farklı bir görsel seçin.');
+                }
+                switch ($boyut[2]) {
+                    case IMAGETYPE_JPEG: $kaydedildi = imagejpeg($hedef, $tmp, 85); break;
+                    case IMAGETYPE_PNG: $kaydedildi = imagepng($hedef, $tmp, 6); break;
+                    case IMAGETYPE_WEBP: $kaydedildi = function_exists('imagewebp') && imagewebp($hedef, $tmp, 85); break;
+                }
+                if (!$kaydedildi) {
+                    throw new RuntimeException('Küçültülen görsel kaydedilemedi. Tekrar deneyin.');
+                }
+            } finally {
+                imagedestroy($kaynak);
+                if ($hedef) {
+                    imagedestroy($hedef);
+                }
+            }
+        }
+    }
+
+    $yeni_isim = 'resim_'.bin2hex(random_bytes(8)).'.'.$uzanti;
+    if (!@move_uploaded_file($tmp, $dizin.$yeni_isim)) {
+        throw new RuntimeException('Görsel kaydedilemedi. Yükleme klasörünün yazma iznini kontrol edin.');
+    }
+    return $yeni_isim;
 }
 
 function tarih($tarih){

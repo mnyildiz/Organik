@@ -27,12 +27,9 @@ $totalRows_rsListe = mysqli_num_rows($rsListe);
               
                <?php if ($totalRows_rsListe > 0) do { ?>   
                   <div class="reference-box" data-aos="fade-up">
-                  	<div class="first">
-                  	    <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" alt="<?php echo $row_rsListe['Baslik']; ?>" >
-                  	</div>
-                  	<div class="last">
-                  	    <img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim2']; ?>" alt="<?php echo $row_rsListe['Baslik']; ?>">
-                  	</div>
+                       <div class="reference-logo">
+                           <img src="<?php echo $SiteURL ?>uploads/<?php echo htmlspecialchars(!empty($row_rsListe['Resim2']) ? $row_rsListe['Resim2'] : $row_rsListe['Resim'], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars((string) $row_rsListe['Baslik'], ENT_QUOTES, 'UTF-8'); ?>" loading="lazy">
+                       </div>
               	</div>
               
               <?php } while ($row_rsListe = mysqli_fetch_assoc($rsListe)); ?>  

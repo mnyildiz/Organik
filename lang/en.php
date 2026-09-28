@@ -25,6 +25,8 @@ return array(
     'home.show_all' => 'VIEW ALL',
     'home.news' => 'News and Announcements',
     'home.go_to_news' => 'VIEW NEWS',
+    'references.previous' => 'Previous references',
+    'references.next' => 'Next references',
     'common.more' => 'Show more',
     'common.share' => 'Share',
     'footer.subscribe_title' => 'Subscribe for the latest news from Organik',

@@ -26,7 +26,7 @@ $totalRows_rsDetay = mysqli_num_rows($rsDetay);
 
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 	
-	$Resim = upload("../uploads/","Resim","ResimEski");
+	$Resim = upload("../uploads/","Resim","ResimEski",1920,1080);
 	//$Icon = upload("../uploads/","Icon","IconEski");
 		
   $insertSQL = sprintf("INSERT INTO tablo_slider (Resim, Detay, Baslik, Baslik2, Link, SiraNo) VALUES (%s, %s, %s, %s, %s, %s)",
@@ -46,7 +46,7 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 	
-	$Resim = upload("../uploads/","Resim","ResimEski");
+	$Resim = upload("../uploads/","Resim","ResimEski",1920,1080);
 	//$Icon = upload("../uploads/","Icon","IconEski");
 	
   $updateSQL = sprintf("UPDATE tablo_slider SET Resim=%s, Detay=%s, Baslik=%s, Baslik2=%s, Link=%s, SiraNo=%s WHERE ID=%s",
@@ -102,9 +102,10 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
                         <label class="col-sm-2 col-form-label">Resim</label>
                         <div class="col-sm-10">
                               <div class="custom-file">
-                                	<input type="file" class="custom-file-input" name="Resim" id="Resim">
+                                    <input type="file" class="custom-file-input" name="Resim" id="Resim" accept=".jpg,.jpeg,.png,.webp,.gif,.svg">
                                 	<label class="custom-file-label" for="Resim">Resim Seç</label>
                                 </div>
+                                <small class="form-text text-muted">JPEG, PNG ve WebP görseller oranları korunarak en fazla 1920×1080 piksele küçültülür. Küçük görseller büyütülmez.</small>
                         </div>
                       </div>
                       

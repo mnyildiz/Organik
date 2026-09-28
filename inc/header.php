@@ -11,8 +11,18 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
                    <img src="<?php echo $SiteURL ?>img/logo.svg" alt="">
                </a>
            </div>
-           <div class="search">
-               <i class="icon-search"></i>
+           <div class="header-actions">
+               <nav class="language-switcher" aria-label="Language">
+                   <a href="<?php echo aktif_sayfa_dil_linki('tr') ?>"<?php if ($Dil === 'tr') echo ' class="active"'; ?>>TR</a>
+                   <?php if (dil_yayinda('en') || $Dil === 'en') { ?>
+                   <a href="<?php echo aktif_sayfa_dil_linki('en') ?>"<?php if ($Dil === 'en') echo ' class="active"'; ?>>EN</a>
+                   <?php } if (dil_yayinda('de') || $Dil === 'de') { ?>
+                   <a href="<?php echo aktif_sayfa_dil_linki('de') ?>"<?php if ($Dil === 'de') echo ' class="active"'; ?>>DE</a>
+                   <?php } ?>
+               </nav>
+               <div class="search">
+                   <i class="icon-search"></i>
+               </div>
            </div>
            <div class="search-box">
               <div class="clos">
@@ -26,14 +36,6 @@ $totalRows_rsHizmetler = mysqli_num_rows($rsHizmetler);
                </div>
            </div>
        </div>
-       <nav class="language-switcher" aria-label="Language">
-           <a href="<?php echo aktif_sayfa_dil_linki('tr') ?>"<?php if ($Dil === 'tr') echo ' class="active"'; ?>>TR</a>
-           <?php if (dil_yayinda('en') || $Dil === 'en') { ?>
-           <a href="<?php echo aktif_sayfa_dil_linki('en') ?>"<?php if ($Dil === 'en') echo ' class="active"'; ?>>EN</a>
-           <?php } if (dil_yayinda('de') || $Dil === 'de') { ?>
-           <a href="<?php echo aktif_sayfa_dil_linki('de') ?>"<?php if ($Dil === 'de') echo ' class="active"'; ?>>DE</a>
-           <?php } ?>
-       </nav>
        <div class="menu">
             <h5><?php echo t('menu') ?></h5>
             <div class="toggle">

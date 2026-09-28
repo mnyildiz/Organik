@@ -25,6 +25,8 @@ return array(
     'home.show_all' => 'ALLE ANZEIGEN',
     'home.news' => 'Nachrichten und Ankündigungen',
     'home.go_to_news' => 'ZUR NACHRICHT',
+    'references.previous' => 'Vorherige Referenzen',
+    'references.next' => 'Weitere Referenzen',
     'common.more' => 'Mehr anzeigen',
     'common.share' => 'Teilen',
     'footer.subscribe_title' => 'Abonnieren Sie die neuesten Nachrichten von Organik',

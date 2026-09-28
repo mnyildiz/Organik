@@ -16,10 +16,10 @@ if ((isset($_GET['ID'])) && ($_GET['ID'] != "") && (isset($_GET['islemsil']))) {
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 	
 	$Resim = upload("../uploads/","Resim","ResimEski");
-	$ResimBuyuk = upload("../uploads/","ResimBuyuk","ResimBuyukEski");
-	$Resim2 = upload("../uploads/","Resim2","Resim2Eski");
+	$ResimBuyuk = upload("../uploads/","ResimBuyuk","ResimBuyukEski",1920,1080);
+	$Resim2 = upload("../uploads/","Resim2","Resim2Eski",400,400);
 	$Resim3 = upload("../uploads/","Resim3","Resim3Eski");
-	$Resim2Hover = upload("../uploads/","Resim2Hover","Resim2HoverEski");
+	$Resim2Hover = upload("../uploads/","Resim2Hover","Resim2HoverEski",400,400);
 				
   $insertSQL = sprintf("INSERT INTO tablo_hizmetler SET Resim=%s, ResimBuyuk=%s, Resim2=%s, Resim3=%s, Resim2Hover=%s, Baslik=%s, Baslik2=%s, Veri1=%s, Veri2=%s, Veri3=%s, Veri4=%s, Veri5=%s, Veri6=%s, Veri7=%s, Veri8=%s, Veri9=%s, Veri10=%s, Veri11=%s, Veri12=%s, BaslikTab1=%s, BaslikTab2=%s, BaslikTab3=%s, BaslikTab4=%s, BaslikTab5=%s, SiraNo=%s",
                        escape($Resim, "text"),
@@ -61,10 +61,10 @@ if ((isset($_POST["islem"])) && ($_POST["islem"] == "kaydet")) {
 if ((isset($_POST["islem"])) && ($_POST["islem"] == "guncelle")) {
 	
 	$Resim = upload("../uploads/","Resim","ResimEski");
-	$ResimBuyuk = upload("../uploads/","ResimBuyuk","ResimBuyukEski");
-	$Resim2 = upload("../uploads/","Resim2","Resim2Eski");
+	$ResimBuyuk = upload("../uploads/","ResimBuyuk","ResimBuyukEski",1920,1080);
+	$Resim2 = upload("../uploads/","Resim2","Resim2Eski",400,400);
 	$Resim3 = upload("../uploads/","Resim3","Resim3Eski");
-	$Resim2Hover = upload("../uploads/","Resim2Hover","Resim2HoverEski");
+	$Resim2Hover = upload("../uploads/","Resim2Hover","Resim2HoverEski",400,400);
 	
 	$updateSQL = sprintf("UPDATE tablo_hizmetler SET Resim=%s, ResimBuyuk=%s, Resim2=%s, Resim3=%s, Resim2Hover=%s, Baslik=%s, Baslik2=%s, Veri1=%s, Veri2=%s, Veri3=%s, Veri4=%s, Veri5=%s, Veri6=%s, Veri7=%s, Veri8=%s, Veri9=%s, Veri10=%s, Veri11=%s, Veri12=%s, BaslikTab1=%s, BaslikTab2=%s, BaslikTab3=%s, BaslikTab4=%s, BaslikTab5=%s, SiraNo=%s WHERE ID=%s",
                        escape($Resim, "text"),

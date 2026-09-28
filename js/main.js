@@ -215,6 +215,42 @@ var swiper1 = new Swiper(".news-slider .mySwiper ", {
    });
 
 
+// References: ten logos per page, with independent navigation.
+$('.reference-carousel').each(function () {
+    var carousel = this;
+    var slider = carousel.querySelector('.reference-swiper');
+    var multiplePages = slider.querySelectorAll('.swiper-slide').length > 1;
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var references = new Swiper(slider, {
+        slidesPerView: 1,
+        spaceBetween: 24,
+        loop: multiplePages,
+        speed: reducedMotion ? 0 : 1800,
+        watchOverflow: true,
+        autoplay: multiplePages && !reducedMotion ? {
+            delay: 6000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
+        } : false,
+        navigation: {
+            prevEl: carousel.querySelector('.reference-prev'),
+            nextEl: carousel.querySelector('.reference-next')
+        },
+        a11y: {
+            prevSlideMessage: carousel.querySelector('.reference-prev') ? carousel.querySelector('.reference-prev').getAttribute('aria-label') : '',
+            nextSlideMessage: carousel.querySelector('.reference-next') ? carousel.querySelector('.reference-next').getAttribute('aria-label') : ''
+        }
+    });
+    carousel.addEventListener('focusin', function () {
+        references.autoplay.stop();
+    });
+    carousel.addEventListener('focusout', function (event) {
+        if (multiplePages && !reducedMotion && !carousel.contains(event.relatedTarget)) {
+            references.autoplay.start();
+        }
+    });
+});
+
 $('.menu .toggle').click(function(){
     $(this).toggleClass('active');
     $('.menu-box').toggleClass('active');

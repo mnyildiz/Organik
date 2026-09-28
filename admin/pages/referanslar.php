@@ -60,8 +60,7 @@ $totalPages_rsListe = ceil($toplam/$maxRows_rsListe)-1;
                   <thead>
                     <tr>
                       <th>#ID</th>
-                      <th>Resim 1</th>
-                      <th>Resim 2</th>
+                      <th>Logo</th>
                       <th>Başlık</th>
                       <th>Sıra No</th>
                       <th><a href="<?php echo sayfa("referanslar_detay") ?>" class="btn btn-sm btn-info">Yeni Ekle</a></th>
@@ -71,8 +70,7 @@ $totalPages_rsListe = ceil($toplam/$maxRows_rsListe)-1;
                     <?php do { ?>
                     <tr>
                       <td><?php echo $row_rsListe['ID']; ?></td>
-                      <td><img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim']; ?>" width="55" height="52" /></td>
-                      <td><img src="<?php echo $SiteURL ?>uploads/<?php echo $row_rsListe['Resim2']; ?>" width="55" height="52" /></td>
+                      <td><img src="<?php echo $SiteURL ?>uploads/<?php echo htmlspecialchars(!empty($row_rsListe['Resim2']) ? $row_rsListe['Resim2'] : $row_rsListe['Resim'], ENT_QUOTES, 'UTF-8'); ?>" alt="Logo" style="width:100px;height:60px;object-fit:contain;padding:6px;background:#f5f5f3" /></td>
                       <td><?php echo $row_rsListe['Baslik']; ?> <?php admin_ceviri_durum_rozetleri('referanslar', $row_rsListe['ID']); ?></td>
                       <td><?php echo $row_rsListe['SiraNo']; ?></td>
                       <td>
